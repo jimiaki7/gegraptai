@@ -41,7 +41,7 @@ export function DetailPanel({
             <div className="detail-panel">
                 <div className="detail-panel-empty">
                     <div className="detail-panel-hint">
-                        単語をクリックすると、パースと釈義ノートを入力できます
+                        Click a word to enter tags and exegetical notes (単語をクリックすると、パースと釈義ノートを入力できます)
                     </div>
                     <div className="detail-panel-options">
                         <label className="detail-checkbox">
@@ -50,7 +50,7 @@ export function DetailPanel({
                                 checked={showMorphUnderWords}
                                 onChange={handleShowMorphChange}
                             />
-                            <span className="detail-checkbox-label">単語の下にパースを表示</span>
+                            <span className="detail-checkbox-label">Show tags under the word (単語の下にパースを表示)</span>
                         </label>
                     </div>
                 </div>
@@ -75,13 +75,13 @@ export function DetailPanel({
                 <div className="detail-fields">
                     <div className="detail-field">
                         <label className="detail-field-label" htmlFor="morph-tag">
-                            文法パース (Morphological Tag)
+                            Morphological Tag (パース)
                         </label>
                         <input
                             id="morph-tag"
                             type="text"
                             className="detail-field-input"
-                            placeholder={selectedWord.language === 'greek' ? '例: Pres Ind Act 3s' : '例: Qal pf 3ms'}
+                            placeholder={selectedWord.language === 'greek' ? 'Ex: Pres Ind Act 3s' : 'Ex: Qal pf 3ms'}
                             value={annotation?.morphTag || ''}
                             onChange={handleMorphChange}
                         />
@@ -89,12 +89,12 @@ export function DetailPanel({
 
                     <div className="detail-field">
                         <label className="detail-field-label" htmlFor="exegetical-note">
-                            釈義ノート (Exegetical Note)
+                            Exegetical Notes (釈義ノート)
                         </label>
                         <textarea
                             id="exegetical-note"
                             className="detail-field-input detail-field-textarea"
-                            placeholder="語義、用例、神学的含意などをメモ..."
+                            placeholder="Syntax, usage, theological value, etc. (語義、用例、神学的含意など...)"
                             value={annotation?.exegeticalNote || ''}
                             onChange={handleNoteChange}
                         />
@@ -108,7 +108,7 @@ export function DetailPanel({
                                     checked={showMorphUnderWords}
                                     onChange={handleShowMorphChange}
                                 />
-                                <span className="detail-checkbox-label">単語の下にパースを表示</span>
+                                <span className="detail-checkbox-label">Show tags under words (単語の下にパースを表示)</span>
                             </label>
 
                             <span className="save-indicator" style={{

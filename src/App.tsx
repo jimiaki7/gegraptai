@@ -49,7 +49,7 @@ function App() {
         const refs = parseMultipleReferences(input);
 
         if (refs.length === 0) {
-            setError('無効な聖書箇所形式です。例: Gen 1:1, Ps 23');
+            setError('Invalid Bible passage format (無効な聖書箇所形式です) Ex: Gen 1:1, Ps 23');
             setVerses([]);
             setSelectedWordId(null);
             return;
@@ -81,7 +81,7 @@ function App() {
         }
 
         if (allVerses.length === 0 && hasError) {
-            setError('指定された範囲に節が見つかりません');
+            setError('Not Found (指定された範囲に節が見つかりません)');
             setVerses([]);
         } else {
             setError(null);
@@ -138,7 +138,7 @@ function App() {
                     <button
                         className="print-button"
                         onClick={handlePrint}
-                        title="印刷 / PDF出力"
+                        title="Print / PDF Export"
                         disabled={verses.length === 0}
                     >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -153,14 +153,7 @@ function App() {
 
             <main className="app-main">
                 {error && (
-                    <div style={{
-                        padding: '12px 16px',
-                        background: 'rgba(229, 57, 53, 0.1)',
-                        borderRadius: '8px',
-                        color: '#e53935',
-                        marginBottom: '16px',
-                        fontSize: '14px'
-                    }}>
+                    <div className="app-error-message">
                         {error}
                     </div>
                 )}
@@ -198,7 +191,24 @@ function App() {
             />
 
             <footer className="app-footer">
-                Copyright &copy; {new Date().getFullYear()} Jimi Takaishi
+                <div className="footer-content">
+                    <p>Copyright &copy; {new Date().getFullYear()} Jimi Takaishi</p>
+                    <div className="footer-citations">
+                        <p>
+                            OSHB (Open Scriptures Hebrew Bible) {' '}
+                            <a href="https://hb.openscriptures.org/index.html" target="_blank" rel="noopener noreferrer">
+                                https://hb.openscriptures.org/index.html
+                            </a>
+                        </p>
+                        <p>
+                            Tauber, J. K., ed. (2017) MorphGNT: SBLGNT Edition. Version 6.12 [Data set]. {' '}
+                            <a href="https://github.com/morphgnt/sblgnt" target="_blank" rel="noopener noreferrer">
+                                https://github.com/morphgnt/sblgnt
+                            </a> {' '}
+                            DOI: 10.5281/zenodo.376200
+                        </p>
+                    </div>
+                </div>
             </footer>
         </div>
     );

@@ -50,10 +50,3 @@ export interface UserSettings {
     showMorphUnderWords: boolean;
 }
 
-export interface AppState {
-    currentReference: BibleReference | null;
-    selectedWordId: string | null;
-    verses: Verse[];
-    annotations: Record<string, Annotation>;
-    settings: UserSettings;
-}

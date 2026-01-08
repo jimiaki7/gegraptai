@@ -23,11 +23,11 @@ export function ReferenceInput({ onSubmit, error }: ReferenceInputProps) {
             <input
                 type="text"
                 className={`reference-input ${error ? 'error' : ''}`}
-                placeholder="例: Gen 1:1, 10, 12; Ps 23, 24"
+                placeholder="Ex: Gen 1:1, 10; Ps 23; Jn 1:1"
                 value={value}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
-                aria-label="聖書箇所を入力"
+                aria-label="Enter biblical reference (聖書箇所を入力)"
             />
         </div>
     );

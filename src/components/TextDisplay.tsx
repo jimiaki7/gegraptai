@@ -15,9 +15,9 @@ export function TextDisplay({ verses, selectedWordId, settings, annotations, onW
             <div className="text-display">
                 <div className="text-display-empty">
                     <div className="text-display-empty-icon">📖</div>
-                    <div className="text-display-empty-text">聖書箇所を入力してください</div>
+                    <div className="text-display-empty-text">Enter biblical reference (聖書箇所を入力してください)</div>
                     <div className="text-display-hint">
-                        例: Gen 1:1, 10, 12; Ps 23, 24; John 3:16
+                        Example: Gen 1:1-5; Ps 23; John 3:16
                     </div>
                 </div>
             </div>

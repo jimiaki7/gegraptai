@@ -170,23 +170,6 @@ export function parseMultipleReferences(input: string): BibleReference[] {
     return results;
 }
 
-/**
- * Format a BibleReference back to a readable string
- */
-export function formatReference(ref: BibleReference, bookName?: string): string {
-    const name = bookName || ref.bookId;
-
-    if (ref.endVerse === null) {
-        // Whole chapter
-        return `${name} ${ref.chapter}`;
-    } else if (ref.startVerse === ref.endVerse) {
-        // Single verse
-        return `${name} ${ref.chapter}:${ref.startVerse}`;
-    } else {
-        // Verse range
-        return `${name} ${ref.chapter}:${ref.startVerse}-${ref.endVerse}`;
-    }
-}
 
 /**
  * Generate a verse reference ID
