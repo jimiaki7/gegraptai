@@ -52,6 +52,10 @@ export function useAnnotations() {
         updateAnnotation(wordId, { exegeticalNote });
     }, [updateAnnotation]);
 
+    const updateColor = useCallback((wordId: string, highlightColor: string) => {
+        updateAnnotation(wordId, { highlightColor });
+    }, [updateAnnotation]);
+
 
     const exportAnnotations = useCallback(() => {
         const dataStr = JSON.stringify(annotations, null, 2);
@@ -93,6 +97,7 @@ export function useAnnotations() {
         getAnnotation,
         updateMorphTag,
         updateNote,
+        updateColor,
         exportAnnotations,
         importAnnotations,
     };

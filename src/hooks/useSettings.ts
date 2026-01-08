@@ -10,7 +10,8 @@ const DEFAULT_SETTINGS: UserSettings = {
     fontFamilyHebrew: 'Frank Ruhl Libre',
     fontFamilyGreek: 'Noto Serif',
     lineHeight: 1.6,
-    showMorphUnderWords: false,
+    showMorphUnderWords: true,
+    showHighlights: true,
 };
 
 export function useSettings() {

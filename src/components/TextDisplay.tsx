@@ -44,7 +44,9 @@ export function TextDisplay({ verses, selectedWordId, settings, annotations, onW
                                         isSelected={word.id === selectedWordId}
                                         fontSize={fontSize}
                                         morphTag={annotations[word.id]?.morphTag}
+                                        highlightColor={annotations[word.id]?.highlightColor}
                                         showMorph={settings.showMorphUnderWords}
+                                        showHighlights={settings.showHighlights}
                                         onClick={onWordClick}
                                     />
                                 ))}

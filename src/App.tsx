@@ -22,6 +22,7 @@ function App() {
         getAnnotation,
         updateMorphTag,
         updateNote,
+        updateColor,
         exportAnnotations,
         importAnnotations,
     } = useAnnotations();
@@ -95,8 +96,16 @@ function App() {
         setSelectedWordId(word.id);
     }, []);
 
+    const handleClearSelection = useCallback(() => {
+        setSelectedWordId(null);
+    }, []);
+
     const handleShowMorphToggle = useCallback((show: boolean) => {
         updateSetting('showMorphUnderWords', show);
+    }, [updateSetting]);
+
+    const handleShowHighlightsToggle = useCallback((show: boolean) => {
+        updateSetting('showHighlights', show);
     }, [updateSetting]);
 
     const handlePrint = useCallback(() => {
@@ -118,8 +127,8 @@ function App() {
     }, [selectedWordId, getAnnotation]);
 
     return (
-        <div className="app">
-            <header className="app-header">
+        <div className="app" onClick={handleClearSelection}>
+            <header className="app-header" onClick={(e) => e.stopPropagation()}>
                 <div className="app-logo">📖 <span>Gegraptai</span></div>
                 <ReferenceInput onSubmit={handleReferenceSubmit} error={error} />
                 <div className="header-actions">
@@ -170,10 +179,13 @@ function App() {
                 selectedWord={selectedWord}
                 annotation={currentAnnotation}
                 showMorphUnderWords={settings.showMorphUnderWords}
+                showHighlights={settings.showHighlights}
                 onMorphTagChange={updateMorphTag}
                 onNoteChange={updateNote}
 
                 onShowMorphToggle={handleShowMorphToggle}
+                onShowHighlightsToggle={handleShowHighlightsToggle}
+                onColorChange={updateColor}
             />
 
             <SettingsPanel

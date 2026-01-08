@@ -37,6 +37,7 @@ export interface Annotation {
     wordId: string;
     morphTag: string;
     exegeticalNote: string;
+    highlightColor?: string;
     updatedAt: number;
 }
 
@@ -48,5 +49,6 @@ export interface UserSettings {
     fontFamilyGreek: string;
     lineHeight: number;
     showMorphUnderWords: boolean;
+    showHighlights: boolean;
 }
 
