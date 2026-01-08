@@ -60,7 +60,7 @@ export function DetailPanel({
                                 checked={showMorphUnderWords}
                                 onChange={handleShowMorphChange}
                             />
-                            <span className="detail-checkbox-label">Show tags under words</span>
+                            <span className="detail-checkbox-label">Show Tags</span>
                         </label>
                         <label className="detail-checkbox">
                             <input
@@ -92,7 +92,7 @@ export function DetailPanel({
 
                 <div className="detail-fields">
                     <div className="detail-field-row">
-                        <div className="detail-field" style={{ flex: 1 }}>
+                        <div className="detail-field is-flexible">
                             <label className="detail-field-label" htmlFor="morph-tag">
                                 Morphological Tag (パース)
                             </label>
@@ -153,14 +153,14 @@ export function DetailPanel({
                     </div>
 
                     <div className="detail-field">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div className="detail-footer-row">
                             <label className="detail-checkbox">
                                 <input
                                     type="checkbox"
                                     checked={showMorphUnderWords}
                                     onChange={handleShowMorphChange}
                                 />
-                                <span className="detail-checkbox-label">Show tags under words</span>
+                                <span className="detail-checkbox-label">Show Tags</span>
                             </label>
 
                             <label className="detail-checkbox">
@@ -173,10 +173,7 @@ export function DetailPanel({
                             </label>
 
                             <span className="save-indicator" style={{
-                                fontSize: '12px',
-                                color: 'var(--color-text-secondary)',
-                                opacity: annotation?.updatedAt ? 1 : 0,
-                                transition: 'opacity 0.3s'
+                                opacity: annotation?.updatedAt ? 1 : 0
                             }}>
                                 ✓ Saved!
                             </span>

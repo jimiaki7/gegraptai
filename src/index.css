@@ -502,6 +502,10 @@ body {
     gap: var(--space-2);
 }
 
+.detail-field.is-flexible {
+    flex: 1;
+}
+
 .detail-field-label {
     font-size: var(--font-size-sm);
     font-weight: 500;
@@ -533,6 +537,18 @@ body {
 
 .detail-panel-options {
     margin-top: 0;
+}
+
+.detail-footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.save-indicator {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    transition: opacity var(--transition-slow);
 }
 
 .detail-checkbox {
