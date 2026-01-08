@@ -149,19 +149,6 @@ export function SettingsPanel({
                         </div>
                     </div>
 
-                    {/* Info Section */}
-                    <div className="settings-section">
-                        <h3 className="settings-section-title">Sample Text</h3>
-                        <div style={{ fontSize: '14px', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
-                            <p style={{ marginBottom: '8px' }}>利用可能な箇所:</p>
-                            <ul style={{ paddingLeft: '20px', margin: 0 }}>
-                                <li>Gen. 1:1-5 (創世記 ヘブライ語)</li>
-                                <li>Ps. 23 (詩篇 ヘブライ語)</li>
-                                <li>John 1:1-5 (ヨハネ ギリシャ語)</li>
-                                <li>Rom. 12:1-2 (ローマ ギリシャ語)</li>
-                            </ul>
-                        </div>
-                    </div>
                     {/* Data Management Section */}
                     <div className="settings-section">
                         <h3 className="settings-section-title">Data Management</h3>
