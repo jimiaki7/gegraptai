@@ -81,7 +81,7 @@ function App() {
         }
 
         if (allVerses.length === 0 && hasError) {
-            setError('Not Found (指定された範囲に節が見つかりません)');
+            setError('Not Found: 指定された範囲に節が見つかりません');
             setVerses([]);
         } else {
             setError(null);

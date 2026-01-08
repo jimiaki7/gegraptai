@@ -50,7 +50,7 @@ export function DetailPanel({
                                 checked={showMorphUnderWords}
                                 onChange={handleShowMorphChange}
                             />
-                            <span className="detail-checkbox-label">Show tags under words (単語の下にパースを表示)</span>
+                            <span className="detail-checkbox-label">Show tags under words</span>
                         </label>
                     </div>
                 </div>
@@ -108,7 +108,7 @@ export function DetailPanel({
                                     checked={showMorphUnderWords}
                                     onChange={handleShowMorphChange}
                                 />
-                                <span className="detail-checkbox-label">Show tags under words (単語の下にパースを表示)</span>
+                                <span className="detail-checkbox-label">Show tags under words</span>
                             </label>
 
                             <span className="save-indicator" style={{
@@ -117,7 +117,7 @@ export function DetailPanel({
                                 opacity: annotation?.updatedAt ? 1 : 0,
                                 transition: 'opacity 0.3s'
                             }}>
-                                ✓ 保存済み
+                                ✓ Saved!
                             </span>
                         </div>
                     </div>
