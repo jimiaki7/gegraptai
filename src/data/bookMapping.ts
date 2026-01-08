@@ -17,6 +17,11 @@ export const BOOKS: Book[] = [
     { id: '2SA', name: '2 Samuel', abbrev: '2Sam', lang: 'hebrew', testament: 'OT' },
     { id: '1KI', name: '1 Kings', abbrev: '1Kgs', lang: 'hebrew', testament: 'OT' },
     { id: '2KI', name: '2 Kings', abbrev: '2Kgs', lang: 'hebrew', testament: 'OT' },
+    { id: '1CH', name: '1 Chronicles', abbrev: '1Chr', lang: 'hebrew', testament: 'OT' },
+    { id: '2CH', name: '2 Chronicles', abbrev: '2Chr', lang: 'hebrew', testament: 'OT' },
+    { id: 'EZR', name: 'Ezra', abbrev: 'Ezra', lang: 'hebrew', testament: 'OT' },
+    { id: 'NEH', name: 'Nehemiah', abbrev: 'Neh', lang: 'hebrew', testament: 'OT' },
+    { id: 'EST', name: 'Esther', abbrev: 'Esth', lang: 'hebrew', testament: 'OT' },
 
     // Poetry
     { id: 'PSA', name: 'Psalms', abbrev: 'Ps', lang: 'hebrew', testament: 'OT' },
@@ -37,7 +42,7 @@ export const BOOKS: Book[] = [
     { id: 'JOL', name: 'Joel', abbrev: 'Joel', lang: 'hebrew', testament: 'OT' },
     { id: 'AMO', name: 'Amos', abbrev: 'Amos', lang: 'hebrew', testament: 'OT' },
     { id: 'OBA', name: 'Obadiah', abbrev: 'Obad', lang: 'hebrew', testament: 'OT' },
-    { id: 'JON', name: 'Jonah', abbrev: 'Jonah', lang: 'hebrew', testament: 'OT' },
+    { id: 'JON', name: 'Jonah', abbrev: 'Jona', lang: 'hebrew', testament: 'OT' },
     { id: 'MIC', name: 'Micah', abbrev: 'Mic', lang: 'hebrew', testament: 'OT' },
     { id: 'NAM', name: 'Nahum', abbrev: 'Nah', lang: 'hebrew', testament: 'OT' },
     { id: 'HAB', name: 'Habakkuk', abbrev: 'Hab', lang: 'hebrew', testament: 'OT' },
@@ -99,23 +104,31 @@ BOOKS.forEach(book => {
     if (book.id === 'EXO') { abbrevMap.set('ex', book); abbrevMap.set('exod', book); }
     if (book.id === 'LEV') { abbrevMap.set('lv', book); }
     if (book.id === 'NUM') { abbrevMap.set('nm', book); abbrevMap.set('nu', book); }
-    if (book.id === 'DEU') { abbrevMap.set('dt', book); }
+    if (book.id === 'DEU') { abbrevMap.set('dt', book); abbrevMap.set('deu', book); }
     if (book.id === 'JOS') { abbrevMap.set('josh', book); }
     if (book.id === 'JDG') { abbrevMap.set('judg', book); abbrevMap.set('jgs', book); }
     if (book.id === 'RUT') { abbrevMap.set('rth', book); }
+    if (book.id === 'PRO') { abbrevMap.set('pro', book); }
     if (book.id === '1SA') { abbrevMap.set('1sa', book); abbrevMap.set('1sm', book); abbrevMap.set('1sam', book); abbrevMap.set('1 sam', book); abbrevMap.set('1 samuel', book); }
     if (book.id === '2SA') { abbrevMap.set('2sa', book); abbrevMap.set('2sm', book); abbrevMap.set('2sam', book); abbrevMap.set('2 sam', book); abbrevMap.set('2 samuel', book); }
     if (book.id === '1KI') { abbrevMap.set('1ki', book); abbrevMap.set('1kgs', book); abbrevMap.set('1 kgs', book); abbrevMap.set('1 kings', book); }
     if (book.id === '2KI') { abbrevMap.set('2ki', book); abbrevMap.set('2kgs', book); abbrevMap.set('2 kgs', book); abbrevMap.set('2 kings', book); }
     if (book.id === '1CH') { abbrevMap.set('1ch', book); abbrevMap.set('1chr', book); abbrevMap.set('1 chr', book); abbrevMap.set('1 chronicles', book); }
     if (book.id === '2CH') { abbrevMap.set('2ch', book); abbrevMap.set('2chr', book); abbrevMap.set('2 chr', book); abbrevMap.set('2 chronicles', book); }
+    if (book.id === 'EZR') { abbrevMap.set('ezr', book); abbrevMap.set('ezra', book); }
+    if (book.id === 'NEH') { abbrevMap.set('neh', book); abbrevMap.set('nehemiah', book); }
+    if (book.id === 'EZK') { abbrevMap.set('ezk', book); }
+    if (book.id === 'EST') { abbrevMap.set('est', book); abbrevMap.set('esth', book); abbrevMap.set('esther', book); }
     if (book.id === 'PSA') { abbrevMap.set('ps', book); abbrevMap.set('psa', book); abbrevMap.set('psalm', book); abbrevMap.set('pss', book); }
-    if (book.id === 'SNG') { abbrevMap.set('song', book); abbrevMap.set('cant', book); abbrevMap.set('sos', book); }
+    if (book.id === 'JOB') { abbrevMap.set('jb', book); abbrevMap.set('job', book); }
+    if (book.id === 'ECC') { abbrevMap.set('ecc', book); }
+    if (book.id === 'AMO') { abbrevMap.set('ams', book); }
+    if (book.id === 'SNG') { abbrevMap.set('song', book); abbrevMap.set('cant', book); abbrevMap.set('sos', book); abbrevMap.set('sgs', book); }
     if (book.id === 'MAT') { abbrevMap.set('mt', book); abbrevMap.set('matt', book); abbrevMap.set('matthew', book); }
     if (book.id === 'MRK') { abbrevMap.set('mk', book); abbrevMap.set('mrk', book); }
     if (book.id === 'LUK') { abbrevMap.set('lk', book); abbrevMap.set('luk', book); }
     if (book.id === 'JHN') { abbrevMap.set('jn', book); abbrevMap.set('jhn', book); }
-    if (book.id === 'ACT') { abbrevMap.set('ac', book); }
+    if (book.id === 'ACT') { abbrevMap.set('ac', book); abbrevMap.set('act', book); }
     if (book.id === 'ROM') { abbrevMap.set('rm', book); abbrevMap.set('romans', book); }
     if (book.id === '1CO') { abbrevMap.set('1co', book); abbrevMap.set('1cor', book); abbrevMap.set('1 cor', book); }
     if (book.id === '2CO') { abbrevMap.set('2co', book); abbrevMap.set('2cor', book); abbrevMap.set('2 cor', book); }
