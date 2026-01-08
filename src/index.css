@@ -363,7 +363,7 @@ body {
 .word-morph {
     display: block;
     font-family: var(--font-family-ui);
-    font-size: 10px;
+    font-size: 12px;
     color: var(--color-text-muted);
     margin-top: 2px;
     letter-spacing: 0.02em;

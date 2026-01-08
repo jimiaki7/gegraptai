@@ -50,7 +50,7 @@ export function DetailPanel({
                                 checked={showMorphUnderWords}
                                 onChange={handleShowMorphChange}
                             />
-                            <span className="detail-checkbox-label">Show tags under the word (単語の下にパースを表示)</span>
+                            <span className="detail-checkbox-label">Show tags under words (単語の下にパースを表示)</span>
                         </label>
                     </div>
                 </div>
