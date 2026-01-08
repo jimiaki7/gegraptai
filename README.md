@@ -74,3 +74,4 @@ GitHub にリポジトリを作成済みであれば、Netlify のダッシュ�
 ## 📚 含まれるデータ
 - 旧約聖書: OSHB (Open Scriptures Hebrew Bible)
 - 新約聖書: MorphGNT (SBLGNT)
+# gegraptai
