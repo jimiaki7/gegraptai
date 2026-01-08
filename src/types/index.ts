@@ -1,4 +1,4 @@
-// Type definitions for Bible Study App
+// Type definitions for Gegraptai
 
 export interface Book {
     id: string;

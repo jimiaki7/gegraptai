@@ -23,7 +23,7 @@ export function ReferenceInput({ onSubmit, error }: ReferenceInputProps) {
             <input
                 type="text"
                 className={`reference-input ${error ? 'error' : ''}`}
-                placeholder="例: Gen. 1:1-5, Ps. 23, Rom. 12:1-2"
+                placeholder="例: Gen 1:1, 10, 12; Ps 23, 24"
                 value={value}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}

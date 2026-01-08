@@ -81,7 +81,7 @@ export function DetailPanel({
                             id="morph-tag"
                             type="text"
                             className="detail-field-input"
-                            placeholder={selectedWord.language === 'greek' ? '例: V-PAI-3S' : '例: Ncmsa'}
+                            placeholder={selectedWord.language === 'greek' ? '例: Pres Ind Act 3s' : '例: Qal pf 3ms'}
                             value={annotation?.morphTag || ''}
                             onChange={handleMorphChange}
                         />

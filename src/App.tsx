@@ -5,7 +5,7 @@ import { DetailPanel } from './components/DetailPanel';
 import { SettingsPanel, SettingsToggle } from './components/SettingsPanel';
 import { useAnnotations } from './hooks/useAnnotations';
 import { useSettings } from './hooks/useSettings';
-import { parseReference } from './utils/referenceParser';
+import { parseMultipleReferences } from './utils/referenceParser';
 import { getVerses } from './data/bibleData';
 import { getBookById } from './data/bookMapping';
 import { Verse, Word } from './types';
@@ -26,13 +26,6 @@ function App() {
         importAnnotations,
     } = useAnnotations();
 
-    // Custom helper if not exposed (it exposes updateAnnotation? No, looking at hook file, it exposes updateMorphTag and updateNote. 
-    // And getAnnotation. But default useAnnotations also returns `updateMorphTag` which calls `updateAnnotation`.
-    // Wait, I need to see if `updateAnnotation` is exposed. 
-    // Looking at file content from previous step: 
-    // return { annotations, getAnnotation, updateMorphTag, updateNote, exportAnnotations, importAnnotations }
-    // It does NOT expose updateAnnotation generally. I need to modify useAnnotations.ts OR add updateHighlight there.
-    // For now, I'll assume I'll fix useAnnotations.ts next.
 
     const {
         settings,
@@ -53,33 +46,48 @@ function App() {
             return;
         }
 
-        const ref = parseReference(input);
+        const refs = parseMultipleReferences(input);
 
-        if (!ref) {
-            setError('無効な聖書箇所形式です');
+        if (refs.length === 0) {
+            setError('無効な聖書箇所形式です。例: Gen 1:1, Ps 23');
             setVerses([]);
             setSelectedWordId(null);
             return;
         }
 
-        const book = getBookById(ref.bookId);
-        if (!book) {
-            setError('書名が見つかりません');
-            setVerses([]);
-            setSelectedWordId(null);
-            return;
+        const allVerses: Verse[] = [];
+        let hasError = false;
+
+        for (const ref of refs) {
+            const book = getBookById(ref.bookId);
+            if (!book) {
+                // Should not happen if parser is correct, but for safety
+                continue;
+            }
+
+            const loadedVerses = getVerses(
+                ref.bookId,
+                ref.chapter,
+                ref.startVerse,
+                ref.endVerse,
+                book.lang
+            );
+
+            if (loadedVerses.length === 0) {
+                hasError = true;
+            } else {
+                allVerses.push(...loadedVerses);
+            }
         }
 
-        const loadedVerses = getVerses(
-            ref.bookId,
-            ref.chapter,
-            ref.startVerse,
-            ref.endVerse,
-            book.lang
-        );
+        if (allVerses.length === 0 && hasError) {
+            setError('指定された範囲に節が見つかりません');
+            setVerses([]);
+        } else {
+            setError(null);
+            setVerses(allVerses);
+        }
 
-        setError(null);
-        setVerses(loadedVerses);
         setSelectedWordId(null);
     }, []);
 

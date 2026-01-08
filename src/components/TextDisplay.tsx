@@ -17,21 +17,21 @@ export function TextDisplay({ verses, selectedWordId, settings, annotations, onW
                     <div className="text-display-empty-icon">📖</div>
                     <div className="text-display-empty-text">聖書箇所を入力してください</div>
                     <div className="text-display-hint">
-                        例: Gen. 1:1-5, Ps. 23, John 1:1-5, Rom. 12:1-2
+                        例: Gen 1:1, 10, 12; Ps 23, 24; John 3:16
                     </div>
                 </div>
             </div>
         );
     }
 
-    // Determine language from first word
-    const language = verses[0]?.words[0]?.language || 'hebrew';
-    const isRTL = language === 'hebrew' || language === 'aramaic';
-    const fontSize = language === 'greek' ? settings.fontSizeGreek : settings.fontSizeHebrew;
-
     return (
         <div className="text-display">
             {verses.map((verse) => {
+                // Determine layout per verse to support mixed languages
+                const language = verse.words[0]?.language || 'hebrew';
+                const isRTL = language === 'hebrew' || language === 'aramaic';
+                const fontSize = language === 'greek' ? settings.fontSizeGreek : settings.fontSizeHebrew;
+
                 return (
                     <div key={verse.reference} className="verse-container">
                         <div className="verse">

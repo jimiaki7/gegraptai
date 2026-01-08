@@ -80,6 +80,97 @@ export function parseReference(input: string): BibleReference | null {
 }
 
 /**
+ * Parses a string that may contain multiple Bible references.
+ * Supports:
+ * - Fully qualified: "Gen 1:1, Ps 23, John 3:16"
+ * - Contextual verses: "Gen 1:1, 5, 10" (interprets 5 and 10 as verses in Gen 1)
+ * - Contextual chapters: "Ps 23, 24" (interprets 24 as chapter 24 in Psalms)
+ * - Contextual chapter:verse: "Ps 23, 24:1" (interprets 24:1 as Ps 24:1)
+ * 
+ * @param input The reference string to parse
+ * @returns An array of BibleReference objects
+ */
+export function parseMultipleReferences(input: string): BibleReference[] {
+    if (!input.trim()) return [];
+
+    const parts = input.split(/[,;]/);
+    const results: BibleReference[] = [];
+
+    let lastBookId: string | null = null;
+    let lastChapter: number | null = null;
+    let lastWasWholeChapter = false;
+
+    for (const part of parts) {
+        const trimmed = part.trim();
+        if (!trimmed) continue;
+
+        // 1. Try standard parsing (complete reference)
+        const parsed = parseReference(trimmed);
+        if (parsed) {
+            results.push(parsed);
+            lastBookId = parsed.bookId;
+            lastChapter = parsed.chapter;
+            lastWasWholeChapter = (parsed.endVerse === null);
+            continue;
+        }
+
+        // 2. Try contextual parsing if we have previous context
+        if (lastBookId) {
+            // Case A: Pattern for "Chapter:Verse" (e.g., "2:5")
+            const chVPattern = /^(\d+):(\d+)(?:[\s-–]+(\d+))?$/;
+            const chVMatch = trimmed.match(chVPattern);
+
+            if (chVMatch) {
+                const chapter = parseInt(chVMatch[1], 10);
+                const startV = parseInt(chVMatch[2], 10);
+                const endV = chVMatch[3] ? parseInt(chVMatch[3], 10) : startV;
+
+                results.push({
+                    bookId: lastBookId,
+                    chapter,
+                    startVerse: startV,
+                    endVerse: endV
+                });
+                lastChapter = chapter;
+                lastWasWholeChapter = false;
+                continue;
+            }
+
+            // Case B: Pattern for "Number" or "Number-Number" (e.g., "10" or "10-12")
+            const numPattern = /^(\d+)(?:[\s-–]+(\d+))?$/;
+            const numMatch = trimmed.match(numPattern);
+
+            if (numMatch) {
+                const firstNum = parseInt(numMatch[1], 10);
+                const secondNum = numMatch[2] ? parseInt(numMatch[2], 10) : null;
+
+                if (lastWasWholeChapter) {
+                    // Context was a whole chapter (e.g., "Gen 1"), so "2" means chapter 2
+                    results.push({
+                        bookId: lastBookId,
+                        chapter: firstNum,
+                        startVerse: 1,
+                        endVerse: null
+                    });
+                    lastChapter = firstNum;
+                } else if (lastChapter !== null) {
+                    // Context was specific verses (e.g., "Gen 1:1"), so "5" means verse 5 in chapter 1
+                    results.push({
+                        bookId: lastBookId,
+                        chapter: lastChapter,
+                        startVerse: firstNum,
+                        endVerse: secondNum !== null ? secondNum : firstNum
+                    });
+                }
+                continue;
+            }
+        }
+    }
+
+    return results;
+}
+
+/**
  * Format a BibleReference back to a readable string
  */
 export function formatReference(ref: BibleReference, bookName?: string): string {
