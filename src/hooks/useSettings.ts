@@ -7,8 +7,8 @@ const DEFAULT_SETTINGS: UserSettings = {
     theme: 'system',
     fontSizeHebrew: 28,
     fontSizeGreek: 28,
-    fontFamilyHebrew: 'Frank Ruhl Libre',
-    fontFamilyGreek: 'Noto Serif',
+    fontFamilyHebrew: 'SBL Hebrew',
+    fontFamilyGreek: 'SBL Greek',
     lineHeight: 1.6,
     showMorphUnderWords: true,
     showHighlights: true,
@@ -97,8 +97,8 @@ export function useSettings() {
 
     // Apply font settings to CSS variables
     useEffect(() => {
-        document.documentElement.style.setProperty('--font-family-hebrew', `"${settings.fontFamilyHebrew}", "SBL Hebrew", "Ezra SIL", serif`);
-        document.documentElement.style.setProperty('--font-family-greek', `"${settings.fontFamilyGreek}", "SBL Greek", "Gentium", serif`);
+        document.documentElement.style.setProperty('--font-family-hebrew', `"${settings.fontFamilyHebrew}", "SBL Hebrew", "Noto Serif Hebrew", "Ezra SIL", serif`);
+        document.documentElement.style.setProperty('--font-family-greek', `"${settings.fontFamilyGreek}", "SBL Greek", "Noto Serif", "Gentium", serif`);
         document.documentElement.style.setProperty('--line-height', settings.lineHeight.toString());
     }, [settings.fontFamilyHebrew, settings.fontFamilyGreek, settings.lineHeight]);
 

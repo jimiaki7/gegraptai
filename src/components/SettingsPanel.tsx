@@ -76,7 +76,8 @@ export function SettingsPanel({
                                 value={settings.fontFamilyHebrew}
                                 onChange={(e) => onFontFamilyHebrewChange(e.target.value)}
                             >
-                                <option value="Frank Ruhl Libre">Frank Ruhl Libre (Serif)</option>
+                                <option value="SBL Hebrew">SBL Hebrew (Biblical Scholar)</option>
+                                <option value="Noto Serif Hebrew">Noto Serif Hebrew (Serif)</option>
                                 <option value="David Libre">David Libre (Serif)</option>
                                 <option value="Noto Sans Hebrew">Noto Sans (Sans-serif)</option>
                             </select>
@@ -89,6 +90,7 @@ export function SettingsPanel({
                                 value={settings.fontFamilyGreek}
                                 onChange={(e) => onFontFamilyGreekChange(e.target.value)}
                             >
+                                <option value="SBL Greek">SBL Greek (Biblical Scholar)</option>
                                 <option value="Noto Serif">Noto Serif (Serif)</option>
                                 <option value="Cardo">Cardo (Scholar)</option>
                                 <option value="Inter">Inter (Sans-serif - for UI)</option>

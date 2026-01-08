@@ -29,8 +29,8 @@
 
     /* Typography */
     --font-family-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-family-hebrew: 'Noto Sans Hebrew', 'SBL Hebrew', 'Ezra SIL', serif;
-    --font-family-greek: 'Noto Serif', 'SBL Greek', 'Gentium Plus', serif;
+    --font-family-hebrew: 'SBL Hebrew', 'Noto Serif Hebrew', 'Noto Sans Hebrew', 'Ezra SIL', serif;
+    --font-family-greek: 'SBL Greek', 'Noto Serif', 'Gentium Plus', serif;
 
     --font-size-xs: 0.75rem;
     --font-size-sm: 0.875rem;
