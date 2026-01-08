@@ -120,7 +120,7 @@ function App() {
     return (
         <div className="app">
             <header className="app-header">
-                <div className="app-logo">📖 Gegraptai</div>
+                <div className="app-logo">📖 <span>Gegraptai</span></div>
                 <ReferenceInput onSubmit={handleReferenceSubmit} error={error} />
                 <div className="header-actions">
                     <a
