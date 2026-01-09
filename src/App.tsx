@@ -1,8 +1,8 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { ReferenceInput } from './components/ReferenceInput';
 import { TextDisplay } from './components/TextDisplay';
 import { DetailPanel } from './components/DetailPanel';
-import { SettingsPanel, SettingsToggle } from './components/SettingsPanel';
+import { SettingsPanel } from './components/SettingsPanel';
+import { Header } from './components/Header';
 import { useAnnotations } from './hooks/useAnnotations';
 import { useAuth } from './hooks/useAuth';
 import { useSettings } from './hooks/useSettings';
@@ -23,34 +23,31 @@ function App() {
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
     const { user, logout, isAuthenticated, isInit } = useAuth();
-
-    const login = useCallback(() => {
-        setIsAuthModalOpen(true);
-    }, []);
-
-    const {
-        annotations,
-        isLoading,
-        isSyncing,
-        getAnnotation,
-        updateMorphTag,
-        updateNote,
-        updateColor,
-        exportAnnotations,
-        importAnnotations,
-    } = useAnnotations(user);
-
-
     const {
         settings,
+        updateSetting,
         setTheme,
         setFontSizeHebrew,
         setFontSizeGreek,
         setFontFamilyHebrew,
         setFontFamilyGreek,
-        setLineHeight,
-        updateSetting
+        setLineHeight
     } = useSettings();
+    const {
+        annotations,
+        updateMorphTag,
+        updateNote,
+        updateColor,
+        getAnnotation,
+        exportAnnotations,
+        importAnnotations,
+        isSyncing,
+        isLoading
+    } = useAnnotations(user);
+
+    const login = useCallback(() => {
+        setIsAuthModalOpen(true);
+    }, []);
 
     // Initial display: Load Genesis 1:1 and John 1:1 on first render
     useEffect(() => {
@@ -175,47 +172,16 @@ function App() {
 
     return (
         <div className="app" onClick={handleClearSelection}>
-            <header className="app-header" onClick={(e) => e.stopPropagation()}>
-                <div className="app-logo">📖 <span>Gegraptai</span></div>
-                <ReferenceInput onSubmit={handleReferenceSubmit} error={error} />
-                <div className="header-actions">
-                    <a
-                        href="https://www.buymeacoffee.com/tzkOt5b5yf"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ display: 'flex', alignItems: 'center', height: '40px' }}
-                    >
-                        <img
-                            src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=tzkOt5b5yf&button_colour=676767&font_colour=ffffff&font_family=Cookie&outline_colour=ffffff&coffee_colour=FFDD00"
-                            alt="Buy me a coffee"
-                            style={{ height: '100%', borderRadius: '8px' }}
-                        />
-                    </a>
-                    <button
-                        className="print-button"
-                        onClick={handlePrint}
-                        title="Print / PDF Export"
-                        disabled={verses.length === 0}
-                    >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M6 9V2h12v7" />
-                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                            <rect x="6" y="14" width="12" height="8" />
-                        </svg>
-                    </button>
-                    <SettingsToggle onClick={() => setSettingsOpen(true)} />
-                    <button
-                        className={`auth-toggle ${isAuthenticated ? 'is-authenticated' : ''}`}
-                        onClick={isAuthenticated ? logout : login}
-                        title={isAuthenticated ? 'Logout' : 'Login'}
-                    >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '20px', height: '20px' }}>
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
-                        </svg>
-                    </button>
-                </div>
-            </header>
+            <Header
+                isAuthenticated={isAuthenticated}
+                onLogin={login}
+                onLogout={logout}
+                onPrint={handlePrint}
+                onOpenSettings={() => setSettingsOpen(true)}
+                onReferenceSubmit={handleReferenceSubmit}
+                error={error}
+                disablePrint={verses.length === 0}
+            />
 
             <main className="app-main">
                 {error && (

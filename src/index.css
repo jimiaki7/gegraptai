@@ -174,33 +174,76 @@ body {
     gap: var(--space-2);
 }
 
-.print-button {
+.header-button {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 40px;
+    gap: var(--space-2);
     height: 40px;
+    padding: 0 var(--space-3);
     background: transparent;
     border: none;
     border-radius: var(--radius-md);
     color: var(--color-text-secondary);
     cursor: pointer;
-    transition: background-color var(--transition-fast), color var(--transition-fast);
+    font-family: var(--font-family-ui);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: all var(--transition-fast);
 }
 
-.print-button:hover:not(:disabled) {
+.header-button:hover:not(:disabled) {
     background: var(--color-bg-secondary);
     color: var(--color-text-primary);
 }
 
-.print-button:disabled {
+.header-button:disabled {
     opacity: 0.4;
     cursor: not-allowed;
 }
 
-.print-button svg {
+.header-button-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-button-icon svg {
     width: 20px;
     height: 20px;
+}
+
+/* Authentication State Button Styles */
+.header-button.is-authenticated {
+    color: var(--color-text-secondary);
+}
+
+.header-button.is-guest {
+    background: var(--color-accent);
+    color: white;
+}
+
+.header-button.is-guest:hover {
+    background: var(--color-accent-dark);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+}
+
+.header-button.is-guest .header-button-text {
+    font-weight: 600;
+}
+
+/* Responsive: Hide text on mobile */
+@media (max-width: 768px) {
+    .header-button {
+        padding: 0;
+        width: 40px;
+        justify-content: center;
+    }
+
+    .header-button-text {
+        display: none;
+    }
 }
 
 .app-main {
@@ -1399,4 +1442,104 @@ body {
 
 .word {
     transition: background-color 0.2s;
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+@media print {
+
+    /* Hide UI elements */
+    .app-header,
+    .app-footer,
+    .detail-panel,
+    .settings-overlay,
+    .welcome-modal-overlay,
+    .auth-modal-overlay,
+    .detail-panel-options,
+    .settings-toggle,
+    .app-error-message,
+    .word:hover,
+    .print-button,
+    .header-actions,
+    .reference-input-wrapper {
+        display: none !important;
+    }
+
+    /* Reset Layout */
+    body,
+    .app,
+    .app-main {
+        background: white !important;
+        color: black !important;
+        height: auto !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .app-main {
+        padding: 0 !important;
+    }
+
+    /* Text Display */
+    .text-display-container {
+        height: auto !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* Typography */
+    .word {
+        /* color: black !important; */
+        background: transparent !important;
+        border: none !important;
+        cursor: default !important;
+        /* Ensure words don't break awkwardly */
+        break-inside: avoid;
+    }
+
+    .word.selected {
+        background: transparent !important;
+        outline: none !important;
+    }
+
+    /* Make verse numbers smaller and grey */
+    .verse-number {
+        color: #888 !important;
+        font-size: 0.8em !important;
+    }
+
+    /* Page Breaks */
+    .verse-container {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .chapter-header {
+        break-after: avoid;
+        page-break-after: avoid;
+        margin-top: 20px !important;
+    }
+
+    /* Columns for side-by-side printing if wide enough, otherwise block */
+    .verse-content {
+        display: block !important;
+        /* Stack them for better readability on A4 portrait, or flex */
+    }
+
+    /* Adjust font sizes for print */
+    .word-text {
+        /* color: black !important; */
+    }
+
+    .word-morph {
+        color: #666 !important;
+        font-size: 0.7em !important;
+    }
 }

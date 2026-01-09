@@ -35,7 +35,7 @@ export function TextDisplay({ verses, selectedWordId, settings, annotations, onW
                 return (
                     <div key={verse.reference} className="verse-container">
                         <div className="verse">
-                            <div className={`verse-content ${isRTL ? 'rtl' : 'ltr'}`}>
+                            <div className={`verse-content ${isRTL ? 'rtl' : 'ltr'}`} style={{ lineHeight: settings.lineHeight }}>
                                 <span className="verse-number">{verse.verse}</span>
                                 {verse.words.map((word) => (
                                     <Word
