@@ -11,6 +11,10 @@ interface DetailPanelProps {
     showHighlights: boolean;
     onShowMorphToggle: (show: boolean) => void;
     onShowHighlightsToggle: (show: boolean) => void;
+    isSyncing: boolean;
+    isLoading: boolean;
+    isAuthenticated: boolean;
+    onLogin: () => void;
 }
 
 export function DetailPanel({
@@ -23,6 +27,10 @@ export function DetailPanel({
     showHighlights,
     onShowMorphToggle,
     onShowHighlightsToggle,
+    isSyncing,
+    isLoading,
+    isAuthenticated,
+    onLogin,
 }: DetailPanelProps) {
     const handleMorphChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         if (selectedWord) {
@@ -78,6 +86,12 @@ export function DetailPanel({
 
     return (
         <div className="detail-panel" onClick={(e) => e.stopPropagation()}>
+            {isLoading && (
+                <div className="detail-loading-overlay">
+                    <div className="spinner"></div>
+                    <span>Loading notes...</span>
+                </div>
+            )}
             <div className="detail-panel-content">
                 <div className="detail-word-display">
                     <div className={`detail-word-text ${languageClass}`}>
@@ -170,11 +184,17 @@ export function DetailPanel({
                                 <span className="detail-checkbox-label">Highlight On/Off</span>
                             </label>
 
-                            <span className="save-indicator" style={{
-                                opacity: annotation?.updatedAt ? 1 : 0
-                            }}>
-                                ✓ Saved
-                            </span>
+                            {isAuthenticated ? (
+                                <span className={`save-indicator ${isSyncing ? 'is-syncing' : ''}`} style={{
+                                    opacity: annotation?.updatedAt || isSyncing ? 1 : 0
+                                }}>
+                                    {isSyncing ? '... Syncing' : '✓ Saved'}
+                                </span>
+                            ) : (
+                                <button className="detail-login-hint" onClick={onLogin}>
+                                    Login to save notes
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -211,6 +211,8 @@ body {
     width: 100%;
     margin: 0 auto;
     padding: var(--space-6);
+    position: relative;
+    /* Added for localized modal */
 }
 
 .app-error-message {
@@ -1005,6 +1007,92 @@ body {
     color: var(--color-text-muted);
     background: var(--color-bg-panel);
     border-top: 1px solid var(--color-border);
+}
+
+/* Auth Modal Popup - Localized to app-main */
+.auth-prompt-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 15, 26, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    border-radius: var(--radius-lg);
+}
+
+.auth-prompt-box {
+    background: var(--color-bg-panel);
+    width: 100%;
+    max-width: 360px;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg), 0 0 0 1px var(--color-border);
+    position: relative;
+    animation: modal-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-enter {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Header Auth Toggle Icon */
+.auth-toggle {
+    background: var(--color-bg-panel);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0;
+}
+
+.auth-toggle:hover {
+    background: var(--color-border);
+    color: var(--color-text-primary);
+    transform: translateY(-1px);
+}
+
+.auth-toggle.is-authenticated {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: var(--color-accent-light);
+}
+
+/* Detail Panel Login Hint */
+.detail-login-hint {
+    background: none;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    padding: 6px 14px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: auto;
+}
+
+.detail-login-hint:hover {
+    background: var(--color-accent);
+    color: white;
 }
 
 .footer-citations {
