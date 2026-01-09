@@ -1,5 +1,6 @@
 import { Verse as VerseType, Word as WordType, UserSettings, Annotation } from '../types';
 import { Word } from './Word';
+import { getBookById } from '../data/bookMapping';
 
 interface TextDisplayProps {
     verses: VerseType[];
@@ -24,6 +25,9 @@ export function TextDisplay({ verses, selectedWordId, settings, annotations, onW
         );
     }
 
+    let lastBookId: string | null = null;
+    let lastChapter: number | null = null;
+
     return (
         <div className="text-display">
             {verses.map((verse) => {
@@ -32,8 +36,26 @@ export function TextDisplay({ verses, selectedWordId, settings, annotations, onW
                 const isRTL = language === 'hebrew' || language === 'aramaic';
                 const fontSize = language === 'greek' ? settings.fontSizeGreek : settings.fontSizeHebrew;
 
+                // Extract bookId from reference (e.g., "GEN.1.1")
+                const bookId = verse.reference.split('.')[0];
+                const showHeader = bookId !== lastBookId || verse.chapter !== lastChapter;
+
+                if (showHeader) {
+                    lastBookId = bookId;
+                    lastChapter = verse.chapter;
+                }
+
+                const book = getBookById(bookId);
+                const bookName = book ? book.name : bookId;
+
                 return (
                     <div key={verse.reference} className="verse-container">
+                        {showHeader && (
+                            <div className="text-display-header">
+                                <span className="text-display-header-book">{bookName}</span>
+                                <span className="text-display-header-chapter">{verse.chapter}</span>
+                            </div>
+                        )}
                         <div className="verse">
                             <div className={`verse-content ${isRTL ? 'rtl' : 'ltr'}`}>
                                 <span className="verse-number">{verse.verse}</span>
