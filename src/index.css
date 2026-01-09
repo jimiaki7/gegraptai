@@ -1326,14 +1326,19 @@ body {
     line-height: var(--line-height-relaxed);
 }
 
-.footer-citations a {
+.footer-content a {
     color: var(--color-accent);
     text-decoration: none;
-    word-break: break-all;
+    transition: opacity var(--transition-fast);
 }
 
-.footer-citations a:hover {
+.footer-content a:hover {
     text-decoration: underline;
+    opacity: 0.8;
+}
+
+.footer-citations a {
+    word-break: break-all;
 }
 
 .coffee-link {
@@ -1344,6 +1349,7 @@ body {
 .coffee-link:hover {
     transform: translateY(-2px);
     filter: brightness(1.1);
+    text-decoration: none;
 }
 
 .coffee-link img {

@@ -240,7 +240,7 @@ function App() {
 
             <footer className="app-footer">
                 <div className="footer-content">
-                    <p>Copyright &copy; {new Date().getFullYear()} <a href="https://github.com/jimiaki7/gegraptai">Jimi Takaishi</a></p>
+                    <p>Copyright &copy; {new Date().getFullYear()} <a href="https://github.com/jimiaki7/gegraptai" target="_blank" rel="noopener noreferrer">Jimi Takaishi</a></p>
                     <div className="footer-citations">
                         <p>
                             OSHB (Open Scriptures Hebrew Bible) {' '}
