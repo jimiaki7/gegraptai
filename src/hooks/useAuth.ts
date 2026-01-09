@@ -45,7 +45,6 @@ export function useAuth() {
     const login = useCallback(async () => {
         // Supabase login logic will be implemented in a dedicated Modal/UI component
         // This hook just provides the user state and login trigger
-        console.log('[Gegraptai Auth] login trigger');
     }, []);
 
     const logout = useCallback(async () => {
