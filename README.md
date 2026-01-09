@@ -32,7 +32,7 @@ No installation required. Just open your browser to instantly access biblical te
 ## 🛠 How to Use
 
 ### Step 1: Access the App
-- Open your browser and navigate to https://gegraptai.com
+- Open your browser and navigate to https://gegraptai.netlify.app/
 
 ### Step 2: Read & Research
 Bible text is displayed on the screen.
@@ -122,7 +122,7 @@ Gegraptai（ゲグラプタイ）は、ヘブライ語とギリシャ語の聖�
 ## 🛠 使い方
 
 ### ステップ 1: アプリにアクセスする
-- ブラウザを開いて、https://gegraptai.com にアクセスしてください。
+- ブラウザを開いて、https://gegraptai.netlify.app/ にアクセスしてください。
 
 ### ステップ ２: 読む・調べる
 画面には左右に聖書テキストが表示されます。
