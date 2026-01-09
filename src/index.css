@@ -213,7 +213,6 @@ body {
 }
 
 /* Authentication State Button Styles */
-/* Authentication State Button Styles */
 .header-button.auth-toggle {
     color: var(--color-text-secondary);
     border: none !important;
@@ -222,7 +221,7 @@ body {
 }
 
 .header-button.auth-toggle:hover {
-    background: transparent !important;
+    background: var(--color-bg-secondary) !important;
     color: var(--color-text-primary);
 }
 
@@ -597,6 +596,17 @@ body {
 .detail-login-hint:hover {
     background: var(--color-accent);
     color: #fff;
+}
+
+.detail-panel-options {
+    margin-top: 0;
+}
+
+.detail-panel-options.horizontal {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-4);
+    justify-content: center;
 }
 
 /* ========================================
