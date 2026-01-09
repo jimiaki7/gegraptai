@@ -49,7 +49,17 @@ export function useAuth() {
     }, []);
 
     const logout = useCallback(async () => {
-        await supabase.auth.signOut();
+        try {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                console.error('[useAuth] signOut error', error);
+            }
+        } catch (e) {
+            console.error('[useAuth] signOut exception', e);
+        } finally {
+            // Force local state cleanup even if server request fails (e.g. 403)
+            setUser(null);
+        }
     }, []);
 
     return {
