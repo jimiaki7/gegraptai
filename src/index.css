@@ -213,36 +213,34 @@ body {
 }
 
 /* Authentication State Button Styles */
-.header-button.is-authenticated {
+.header-button.auth-toggle {
     color: var(--color-text-secondary);
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
-.header-button.is-guest {
-    background: var(--color-accent);
-    color: white;
-}
-
-.header-button.is-guest:hover {
-    background: var(--color-accent-dark);
-    color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
-}
-
-.header-button.is-guest .header-button-text {
-    font-weight: 600;
+.header-button.auth-toggle:hover {
+    background: transparent !important;
+    color: var(--color-text-primary);
 }
 
 /* Responsive: Hide text on mobile */
 @media (max-width: 768px) {
-    .header-button {
+    .header-button:not(.auth-toggle) {
         padding: 0;
         width: 40px;
         justify-content: center;
     }
 
-    .header-button-text {
+    .header-button:not(.auth-toggle) .header-button-text {
         display: none;
+    }
+
+    /* Auth button on mobile should show text */
+    .header-button.auth-toggle {
+        padding: 0 var(--space-3);
+        width: auto;
     }
 }
 
@@ -1542,4 +1540,34 @@ body {
         color: #666 !important;
         font-size: 0.7em !important;
     }
+}
+
+/* ========================================
+   Footer Styles
+   ======================================== */
+.app-footer {
+    margin-top: auto;
+    padding: var(--space-6);
+    background: var(--color-bg-panel);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-6);
+}
+
+.footer-content {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.footer-content p {
+    margin: 4px 0;
+}
+
+.coffee-link img {
+    height: 40px;
+    width: auto;
+    display: block;
 }

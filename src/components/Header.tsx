@@ -30,17 +30,7 @@ export const Header: React.FC<HeaderProps> = ({
             <ReferenceInput onSubmit={onReferenceSubmit} error={error} />
 
             <div className="header-actions">
-                <a
-                    href="https://www.buymeacoffee.com/tzkOt5b5yf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="coffee-link"
-                >
-                    <img
-                        src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=tzkOt5b5yf&button_colour=676767&font_colour=ffffff&font_family=Cookie&outline_colour=ffffff&coffee_colour=FFDD00"
-                        alt="Buy me a coffee"
-                    />
-                </a>
+
 
                 <button
                     className="header-button"
@@ -63,29 +53,12 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                     className={`header-button auth-toggle ${isAuthenticated ? 'is-authenticated' : 'is-guest'}`}
                     onClick={isAuthenticated ? onLogout : onLogin}
-                    title={isAuthenticated ? 'Logout' : 'Sign In'}
+                    title={isAuthenticated ? 'Logout' : 'Login'}
                 >
                     {isAuthenticated ? (
-                        <>
-                            <span className="header-button-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
-                            </span>
-                            <span className="header-button-text">Logout</span>
-                        </>
+                        <span className="header-button-text">Logout</span>
                     ) : (
-                        <>
-                            <span className="header-button-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                                    <polyline points="10 17 15 12 10 7" />
-                                    <line x1="15" y1="12" x2="3" y2="12" />
-                                </svg>
-                            </span>
-                            <span className="header-button-text">Sign In</span>
-                        </>
+                        <span className="header-button-text">Login</span>
                     )}
                 </button>
             </div>

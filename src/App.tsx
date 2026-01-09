@@ -257,6 +257,17 @@ function App() {
                         </p>
                     </div>
                 </div>
+                <a
+                    href="https://www.buymeacoffee.com/tzkOt5b5yf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="coffee-link"
+                >
+                    <img
+                        src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=tzkOt5b5yf&button_colour=676767&font_colour=ffffff&font_family=Cookie&outline_colour=ffffff&coffee_colour=FFDD00"
+                        alt="Buy me a coffee"
+                    />
+                </a>
             </footer>
         </div>
     );
