@@ -59,7 +59,7 @@ export function DetailPanel({
                     <div className="detail-panel-hint">
                         Click a word to enter tags and exegetical notes (単語をクリックすると、パースと釈義ノートを入力できます)
                     </div>
-                    <div className="detail-panel-options">
+                    <div className="detail-panel-options horizontal">
                         <label className="detail-checkbox">
                             <input
                                 type="checkbox"
@@ -188,12 +188,19 @@ export function DetailPanel({
                                 <span className={`save-indicator ${isSyncing ? 'is-syncing' : ''}`} style={{
                                     opacity: annotation?.updatedAt || isSyncing ? 1 : 0
                                 }}>
-                                    {isSyncing ? '... Syncing' : '✓ Saved'}
+                                    {isSyncing ? '... Syncing' : '✓ Cloud Saved'}
                                 </span>
                             ) : (
-                                <button className="detail-login-hint" onClick={onLogin}>
-                                    Login to save notes
-                                </button>
+                                <>
+                                    <span className="save-indicator is-local" style={{
+                                        opacity: annotation?.updatedAt ? 1 : 0
+                                    }}>
+                                        ✓ Local
+                                    </span>
+                                    <button className="detail-login-hint" onClick={onLogin}>
+                                        Sync to Cloud
+                                    </button>
+                                </>
                             )}
                         </div>
                     </div>

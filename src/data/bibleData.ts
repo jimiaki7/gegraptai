@@ -1,10 +1,6 @@
 import { Verse, Word } from '../types';
 import { getVerseId, getWordId } from '../utils/referenceParser';
 
-// Import generated Bible data
-import ntData from './nt.json';
-import otData from './ot.json';
-
 // Type definitions for imported data
 interface WordData {
     t: string;  // text
@@ -12,16 +8,12 @@ interface WordData {
     m: string;  // morph
 }
 
-interface BibleData {
-    [bookId: string]: {
-        [chapter: string]: {
-            [verse: string]: WordData[];
-        };
+// Book data structure (single book)
+interface BookData {
+    [chapter: string]: {
+        [verse: string]: WordData[];
     };
 }
-
-const NT_DATA = ntData as BibleData;
-const OT_DATA = otData as BibleData;
 
 // OT Books (Hebrew/Aramaic)
 const OT_BOOKS = new Set([
@@ -34,13 +26,22 @@ const OT_BOOKS = new Set([
     'NAM', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL'
 ]);
 
+// NT Books
+const NT_BOOKS = new Set([
+    'MAT', 'MRK', 'LUK', 'JHN', 'ACT',
+    'ROM', '1CO', '2CO', 'GAL', 'EPH', 'PHP', 'COL',
+    '1TH', '2TH', '1TI', '2TI', 'TIT', 'PHM',
+    'HEB', 'JAS', '1PE', '2PE', '1JN', '2JN', '3JN', 'JUD', 'REV'
+]);
+
 // Daniel has Aramaic portions (chapters 2:4b-7:28)
 const ARAMAIC_PORTIONS: { [bookId: string]: { startChapter: number; endChapter: number }[] } = {
     'DAN': [{ startChapter: 2, endChapter: 7 }],
     'EZR': [{ startChapter: 4, endChapter: 7 }],
 };
 
-
+// Dynamic imports map
+const bookModules = import.meta.glob('./books/*.json');
 
 /**
  * Determine language for a book/chapter
@@ -64,61 +65,76 @@ function getLanguage(bookId: string, chapter: number): 'hebrew' | 'aramaic' | 'g
 }
 
 /**
- * Get verses for a given book and chapter
+ * Get verses for a given book and chapter (Async)
  */
-export function getVerses(
+export async function getVerses(
     bookId: string,
     chapter: number,
     startVerse: number,
     endVerse: number | null,
     _langHint?: 'hebrew' | 'aramaic' | 'greek'
-): Verse[] {
-    const isOT = OT_BOOKS.has(bookId);
-    const data = isOT ? OT_DATA : NT_DATA;
+): Promise<Verse[]> {
+    const importFn = bookModules[`./books/${bookId}.json`];
 
-    const chapterData = data[bookId]?.[chapter.toString()];
-    if (!chapterData) {
+    if (!importFn) {
+        console.error(`Data for book ${bookId} not found`);
         return [];
     }
 
-    const language = getLanguage(bookId, chapter);
-    const verses: Verse[] = [];
+    try {
+        // Force cast to any first to avoid complex union type issues with dynamic imports
+        const module = await importFn() as any;
+        const bookData = ('default' in module ? module.default : module) as BookData;
 
-    // Get all verse numbers and sort them
-    const verseNumbers = Object.keys(chapterData)
-        .map(v => parseInt(v, 10))
-        .sort((a, b) => a - b);
+        const chapterData = bookData[chapter.toString()];
 
-    for (const verseNum of verseNumbers) {
-        // Apply verse range filter
-        if (endVerse !== null) {
-            if (verseNum < startVerse || verseNum > endVerse) {
-                continue;
-            }
+        if (!chapterData) {
+            return [];
         }
 
-        const wordsData = chapterData[verseNum.toString()];
-        if (!wordsData || wordsData.length === 0) continue;
+        const language = getLanguage(bookId, chapter);
+        const verses: Verse[] = [];
 
-        const verseId = getVerseId(bookId, chapter, verseNum);
-        const words: Word[] = wordsData.map((w, idx) => ({
-            id: getWordId(verseId, idx),
-            verseRef: verseId,
-            position: idx,
-            surfaceForm: w.t,
-            lemma: w.l,
-            language,
-        }));
+        // Get all verse numbers and sort them
+        const verseNumbers = Object.keys(chapterData)
+            .map(v => parseInt(v, 10))
+            .sort((a, b) => a - b);
 
-        verses.push({
-            reference: verseId,
-            chapter,
-            verse: verseNum,
-            words,
-        });
+        for (const verseNum of verseNumbers) {
+            // Apply verse range filter
+            if (endVerse !== null) {
+                if (verseNum < startVerse || verseNum > endVerse) {
+                    continue;
+                }
+            }
+
+            const wordsData: WordData[] = chapterData[verseNum.toString()];
+            if (!wordsData || wordsData.length === 0) continue;
+
+            const verseId = getVerseId(bookId, chapter, verseNum);
+            const words: Word[] = wordsData.map((w: WordData, idx: number) => ({
+                id: getWordId(verseId, idx),
+                verseRef: verseId,
+                position: idx,
+                surfaceForm: w.t,
+                lemma: w.l,
+                language,
+            }));
+
+            verses.push({
+                reference: verseId,
+                chapter,
+                verse: verseNum,
+                words,
+            });
+        }
+
+        return verses;
+
+    } catch (error) {
+        console.error(`Failed to load data for ${bookId}:`, error);
+        return [];
     }
-
-    return verses;
 }
 
 /**
@@ -127,28 +143,43 @@ export function getVerses(
 export function getAvailableBooks(): { id: string; testament: 'OT' | 'NT' }[] {
     const books: { id: string; testament: 'OT' | 'NT' }[] = [];
 
-    for (const bookId of Object.keys(OT_DATA)) {
+    OT_BOOKS.forEach(bookId => {
         books.push({ id: bookId, testament: 'OT' });
-    }
+    });
 
-    for (const bookId of Object.keys(NT_DATA)) {
+    NT_BOOKS.forEach(bookId => {
         books.push({ id: bookId, testament: 'NT' });
-    }
+    });
 
     return books;
 }
 
 /**
  * Get available chapters for a book
+ * NOTE: This function previously relied on loaded data. 
+ * Since we don't want to load data just to check chapters, 
+ * we might need a separate metadata file or just return a generic range/allow all.
+ * For now, implementing a simplified version or async version.
+ * 
+ * Ideally we should have a metadata.json with chapter counts.
+ * For this refactor, we will make it async and load the book data.
  */
-export function getAvailableChapters(bookId: string): number[] {
-    const isOT = OT_BOOKS.has(bookId);
-    const data = isOT ? OT_DATA : NT_DATA;
+export async function getAvailableChapters(bookId: string): Promise<number[]> {
+    const importFn = bookModules[`./books/${bookId}.json`];
 
-    const bookData = data[bookId];
-    if (!bookData) return [];
+    if (!importFn) {
+        return [];
+    }
 
-    return Object.keys(bookData)
-        .map(c => parseInt(c, 10))
-        .sort((a, b) => a - b);
+    try {
+        const module = await importFn() as { default: BookData } | BookData;
+        const bookData = 'default' in module ? module.default : module;
+
+        return Object.keys(bookData)
+            .map(c => parseInt(c, 10))
+            .sort((a, b) => a - b);
+    } catch (e) {
+        return [];
+    }
 }
+

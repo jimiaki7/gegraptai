@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { ReferenceInput } from './components/ReferenceInput';
 import { TextDisplay } from './components/TextDisplay';
 import { DetailPanel } from './components/DetailPanel';
@@ -11,7 +11,9 @@ import { getVerses } from './data/bibleData';
 import { getBookById } from './data/bookMapping';
 import { Verse, Word } from './types';
 import { AuthModal } from './components/AuthModal';
+import { WelcomeModal } from './components/WelcomeModal';
 
+const WELCOME_SHOWN_KEY = 'gegraptai-welcome-shown';
 
 function App() {
     const [verses, setVerses] = useState<Verse[]>([]);
@@ -19,7 +21,8 @@ function App() {
     const [error, setError] = useState<string | null>(null);
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-    const { user, logout, isAuthenticated } = useAuth();
+    const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
+    const { user, logout, isAuthenticated, isInit } = useAuth();
 
     const login = useCallback(() => {
         setIsAuthModalOpen(true);
@@ -49,7 +52,36 @@ function App() {
         updateSetting
     } = useSettings();
 
-    const handleReferenceSubmit = useCallback((input: string) => {
+    // Initial display: Load Genesis 1:1 and John 1:1 on first render
+    useEffect(() => {
+        if (!isInit) return;
+
+        const loadInitialData = async () => {
+            try {
+                // Load initial verses: Genesis 1:1 and John 1:1
+                const genVerse = await getVerses('GEN', 1, 1, 1, 'hebrew');
+                const johnVerse = await getVerses('JHN', 1, 1, 1, 'greek');
+                setVerses([...genVerse, ...johnVerse]);
+            } catch (e) {
+                console.error("Failed to load initial verses", e);
+            }
+        };
+
+        loadInitialData();
+
+        // Show welcome modal on first visit
+        const hasSeenWelcome = localStorage.getItem(WELCOME_SHOWN_KEY);
+        if (!hasSeenWelcome) {
+            setIsWelcomeModalOpen(true);
+        }
+    }, [isInit]);
+
+    const handleWelcomeClose = useCallback(() => {
+        setIsWelcomeModalOpen(false);
+        localStorage.setItem(WELCOME_SHOWN_KEY, 'true');
+    }, []);
+
+    const handleReferenceSubmit = useCallback(async (input: string) => {
         if (!input.trim()) {
             setVerses([]);
             setError(null);
@@ -76,18 +108,23 @@ function App() {
                 continue;
             }
 
-            const loadedVerses = getVerses(
-                ref.bookId,
-                ref.chapter,
-                ref.startVerse,
-                ref.endVerse,
-                book.lang
-            );
+            try {
+                const loadedVerses = await getVerses(
+                    ref.bookId,
+                    ref.chapter,
+                    ref.startVerse,
+                    ref.endVerse,
+                    book.lang
+                );
 
-            if (loadedVerses.length === 0) {
+                if (loadedVerses.length === 0) {
+                    hasError = true;
+                } else {
+                    allVerses.push(...loadedVerses);
+                }
+            } catch (e) {
                 hasError = true;
-            } else {
-                allVerses.push(...loadedVerses);
+                console.error("Error loading verses", e);
             }
         }
 
@@ -196,6 +233,11 @@ function App() {
                 <AuthModal
                     isOpen={isAuthModalOpen}
                     onClose={() => setIsAuthModalOpen(false)}
+                />
+                <WelcomeModal
+                    isOpen={isWelcomeModalOpen}
+                    onClose={handleWelcomeClose}
+                    onLoginClick={login}
                 />
             </main>
 

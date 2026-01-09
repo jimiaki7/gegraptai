@@ -2,19 +2,44 @@ import { useState, useEffect, useCallback } from 'react';
 import { Annotation } from '../types';
 import { supabase } from '../lib/supabase';
 
+const LOCAL_STORAGE_KEY = 'gegraptai-annotations';
+
+function loadLocalAnnotations(): Record<string, Annotation> {
+    try {
+        const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (stored) {
+            return JSON.parse(stored);
+        }
+    } catch (e) {
+        console.error('Failed to load local annotations:', e);
+    }
+    return {};
+}
+
+function saveLocalAnnotations(annotations: Record<string, Annotation>) {
+    try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(annotations));
+    } catch (e) {
+        console.error('Failed to save local annotations:', e);
+    }
+}
+
 export function useAnnotations(user: any) {
     const [annotations, setAnnotations] = useState<Record<string, Annotation>>({});
     const [isLoading, setIsLoading] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
 
-    // Load from Supabase on mount/user change
+    // Load annotations on mount/user change
     useEffect(() => {
         if (!user) {
-            setAnnotations({});
+            // No user: load from localStorage
+            const local = loadLocalAnnotations();
+            setAnnotations(local);
             setIsLoading(false);
             return;
         }
 
+        // User logged in: load from Supabase
         async function fetchAnnotations() {
             setIsLoading(true);
             try {
@@ -52,8 +77,6 @@ export function useAnnotations(user: any) {
     }, [annotations]);
 
     const updateAnnotation = useCallback(async (wordId: string, updates: Partial<Omit<Annotation, 'wordId'>>) => {
-        if (!user) return;
-
         const now = Date.now();
         const current = annotations[wordId] || {
             wordId,
@@ -69,12 +92,19 @@ export function useAnnotations(user: any) {
         };
 
         // Update local state immediately
-        setAnnotations(prev => ({
-            ...prev,
+        const newAnnotations = {
+            ...annotations,
             [wordId]: newAnnotation,
-        }));
+        };
+        setAnnotations(newAnnotations);
 
-        // Sync with Supabase
+        if (!user) {
+            // No user: save to localStorage only
+            saveLocalAnnotations(newAnnotations);
+            return;
+        }
+
+        // User logged in: sync with Supabase
         setIsSyncing(true);
         try {
             const { error } = await supabase
@@ -132,7 +162,11 @@ export function useAnnotations(user: any) {
                     if (typeof parsed !== 'object') {
                         throw new Error('Invalid JSON format');
                     }
-                    setAnnotations(prev => ({ ...prev, ...parsed }));
+                    const merged = { ...annotations, ...parsed };
+                    setAnnotations(merged);
+                    if (!user) {
+                        saveLocalAnnotations(merged);
+                    }
                     resolve();
                 } catch (error) {
                     reject(error);
@@ -141,7 +175,7 @@ export function useAnnotations(user: any) {
             reader.onerror = () => reject(new Error('Failed to read file'));
             reader.readAsText(file);
         });
-    }, []);
+    }, [annotations, user]);
 
     return {
         annotations,
@@ -155,4 +189,3 @@ export function useAnnotations(user: any) {
         importAnnotations,
     };
 }
-
