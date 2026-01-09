@@ -1,30 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Annotation } from '../types';
 
-const STORAGE_KEY = 'bible-study-annotations';
-
 export function useAnnotations() {
-    const [annotations, setAnnotations] = useState<Record<string, Annotation>>({});
+    const [annotations, setAnnotations] = useState<Record<string, Annotation>>(() => {
+        const saved = localStorage.getItem('gegraptai_annotations');
+        return saved ? JSON.parse(saved) : {};
+    });
 
-    // Load from localStorage on mount
     useEffect(() => {
-        try {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                setAnnotations(JSON.parse(stored));
-            }
-        } catch (e) {
-            console.error('Failed to load annotations:', e);
-        }
-    }, []);
-
-    // Save to localStorage when annotations change
-    useEffect(() => {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(annotations));
-        } catch (e) {
-            console.error('Failed to save annotations:', e);
-        }
+        localStorage.setItem('gegraptai_annotations', JSON.stringify(annotations));
     }, [annotations]);
 
     const getAnnotation = useCallback((wordId: string): Annotation | undefined => {
@@ -38,6 +22,7 @@ export function useAnnotations() {
                 wordId,
                 morphTag: prev[wordId]?.morphTag || '',
                 exegeticalNote: prev[wordId]?.exegeticalNote || '',
+                highlightColor: prev[wordId]?.highlightColor || '',
                 ...updates,
                 updatedAt: Date.now(),
             },
@@ -77,7 +62,6 @@ export function useAnnotations() {
                 try {
                     const content = e.target?.result as string;
                     const parsed = JSON.parse(content);
-                    // Basic validation check
                     if (typeof parsed !== 'object') {
                         throw new Error('Invalid JSON format');
                     }
@@ -102,3 +86,4 @@ export function useAnnotations() {
         importAnnotations,
     };
 }
+

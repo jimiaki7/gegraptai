@@ -44,8 +44,6 @@ export function DetailPanel({
         onShowHighlightsToggle(e.target.checked);
     }, [onShowHighlightsToggle]);
 
-
-
     if (!selectedWord) {
         return (
             <div className="detail-panel is-empty" onClick={(e) => e.stopPropagation()}>
@@ -175,7 +173,7 @@ export function DetailPanel({
                             <span className="save-indicator" style={{
                                 opacity: annotation?.updatedAt ? 1 : 0
                             }}>
-                                ✓ Saved!
+                                ✓ Saved
                             </span>
                         </div>
                     </div>

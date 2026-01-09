@@ -182,7 +182,6 @@ function App() {
                 showHighlights={settings.showHighlights}
                 onMorphTagChange={updateMorphTag}
                 onNoteChange={updateNote}
-
                 onShowMorphToggle={handleShowMorphToggle}
                 onShowHighlightsToggle={handleShowHighlightsToggle}
                 onColorChange={updateColor}
