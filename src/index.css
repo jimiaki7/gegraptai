@@ -225,6 +225,15 @@ body {
     color: var(--color-text-primary);
 }
 
+.header-button.auth-toggle.is-authenticated {
+    color: #e53935;
+}
+
+.header-button.auth-toggle.is-authenticated:hover {
+    background: rgba(229, 57, 53, 0.1) !important;
+    color: #d32f2f;
+}
+
 /* Responsive: Hide text on mobile */
 @media (max-width: 768px) {
     .header-button:not(.auth-toggle) {
