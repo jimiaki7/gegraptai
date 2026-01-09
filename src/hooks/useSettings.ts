@@ -9,7 +9,7 @@ const DEFAULT_SETTINGS: UserSettings = {
     fontSizeGreek: 28,
     fontFamilyHebrew: 'SBL Hebrew',
     fontFamilyGreek: 'SBL Greek',
-    lineHeight: 1.6,
+    lineHeight: 3.0,
     showMorphUnderWords: true,
     showHighlights: true,
 };

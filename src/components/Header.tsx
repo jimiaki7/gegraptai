@@ -57,7 +57,6 @@ export const Header: React.FC<HeaderProps> = ({
                             <rect x="6" y="14" width="12" height="8" />
                         </svg>
                     </span>
-                    <span className="header-button-text">Print</span>
                 </button>
 
                 <SettingsToggle onClick={onOpenSettings} />
