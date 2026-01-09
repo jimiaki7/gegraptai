@@ -31,7 +31,10 @@ No installation required. Just open your browser to instantly access biblical te
 
 ## 🛠 How to Use
 
-### Step 1:  Read & Research
+### Step 1: Access the App
+- Open your browser and navigate to https://gegraptai.com
+
+### Step 2: Read & Research
 Bible text is displayed on the screen.
 - **Click on a word** you want to investigate.
 - The **Detail Panel** will be opened showing details for that word.
@@ -73,12 +76,17 @@ Feel free to submit bug reports or feature requests via [Issues](https://github.
 
 License: MIT
 
+
 <br>
 <br>
 <br>
 
 ---
----
+
+<br>
+<br>
+<br>
+
 
 # 📖 Gegraptai (日本語)
 
@@ -113,7 +121,10 @@ Gegraptai（ゲグラプタイ）は、ヘブライ語とギリシャ語の聖�
 
 ## 🛠 使い方
 
-### ステップ 1: 読む・調べる
+### ステップ 1: アプリにアクセスする
+- ブラウザを開いて、https://gegraptai.com にアクセスしてください。
+
+### ステップ ２: 読む・調べる
 画面には左右に聖書テキストが表示されます。
 - **調べたい単語をクリック**してみてください。
 - **Detail Panel**が開き、その単語の詳細が表示されます。
