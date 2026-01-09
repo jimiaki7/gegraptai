@@ -33,6 +33,18 @@ export const Header: React.FC<HeaderProps> = ({
 
 
                 <button
+                    className={`header-button auth-toggle ${isAuthenticated ? 'is-authenticated' : 'is-guest'}`}
+                    onClick={isAuthenticated ? onLogout : onLogin}
+                    title={isAuthenticated ? 'Logout' : 'Login'}
+                >
+                    {isAuthenticated ? (
+                        <span className="header-button-text">Logout</span>
+                    ) : (
+                        <span className="header-button-text">Login</span>
+                    )}
+                </button>
+
+                <button
                     className="header-button"
                     onClick={onPrint}
                     title="Print / PDF Export"
@@ -49,18 +61,6 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
 
                 <SettingsToggle onClick={onOpenSettings} />
-
-                <button
-                    className={`header-button auth-toggle ${isAuthenticated ? 'is-authenticated' : 'is-guest'}`}
-                    onClick={isAuthenticated ? onLogout : onLogin}
-                    title={isAuthenticated ? 'Logout' : 'Login'}
-                >
-                    {isAuthenticated ? (
-                        <span className="header-button-text">Logout</span>
-                    ) : (
-                        <span className="header-button-text">Login</span>
-                    )}
-                </button>
             </div>
         </header>
     );

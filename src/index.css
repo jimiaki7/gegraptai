@@ -435,9 +435,10 @@ body {
 .word-morph {
     display: block;
     font-family: var(--font-family-ui);
-    font-size: 12px;
+    font-size: 10px;
+    line-height: 1;
     color: var(--color-text-muted);
-    margin-top: 2px;
+    margin-top: 0;
     letter-spacing: 0.02em;
 }
 
