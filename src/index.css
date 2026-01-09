@@ -1381,91 +1381,23 @@ body {
 
 @media print {
 
-    /* Hide UI elements */
-    .app-header,
-    .detail-panel,
-    .settings-overlay {
-        display: none !important;
-    }
-
-    /* Reset app layout for print */
-    .app {
-        min-height: auto;
-    }
-
-    .app-main {
-        max-width: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    /* Adjust text display for print */
-    .text-display {
-        padding: 20px 0;
-    }
-
-    .verse {
-        margin-bottom: 20px;
-        page-break-inside: avoid;
-    }
-
-    .verse-content {
-        line-height: 2.5;
-    }
-
-    .word {
-        background: none !important;
-        color: #000 !important;
-        margin: 2px 4px;
-    }
-
-    .word-morph {
-        color: #666 !important;
-        font-size: 9px;
-    }
-
-    .verse-number {
-        color: #999 !important;
-    }
-
-    /* Force light theme colors for print */
-    :root,
-    [data-theme="dark"] {
-        --color-bg-primary: #fff;
-        --color-text-primary: #000;
-        --color-text-muted: #666;
-        --color-verse-number: #999;
-    }
-}
-
-
-.word {
-    transition: background-color 0.2s;
-}
-
-/* ========================================
-   Print Styles
-   ======================================== */
-@media print {
-
-    /* Hide UI elements */
+    /* Hide UI elements and interactive bits */
     .app-header,
     .app-footer,
     .detail-panel,
     .settings-overlay,
     .welcome-modal-overlay,
-    .auth-modal-overlay,
-    .detail-panel-options,
-    .settings-toggle,
+    .auth-prompt-overlay,
     .app-error-message,
-    .word:hover,
-    .print-button,
     .header-actions,
-    .reference-input-wrapper {
+    .reference-input-wrapper,
+    .settings-toggle,
+    .detail-panel-options,
+    .print-button {
         display: none !important;
     }
 
-    /* Reset Layout */
+    /* Reset Layout for Paper */
     body,
     .app,
     .app-main {
@@ -1477,30 +1409,45 @@ body {
         margin: 0 !important;
         width: 100% !important;
         max-width: none !important;
+        display: block !important;
     }
 
     .app-main {
-        padding: 0 !important;
+        padding: 1cm !important;
+        /* Standard print margin */
     }
 
-    /* Text Display */
-    .text-display-container {
+    /* Main Text Display - ensure it shows everything */
+    .text-display {
         height: auto !important;
         overflow: visible !important;
         padding: 0 !important;
-        max-width: 100% !important;
-        background: transparent !important;
-        box-shadow: none !important;
     }
 
-    /* Typography */
+    /* Verse Layout - maintain the same feel as screen but optimized for print */
+    .verse-container {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 2rem;
+    }
+
+    /* 
+       Note: .verse-content's style (line-height) and .word's style (font-size) 
+       are applied via inline styles in React from settings. 
+       We must ENSURE CSS doesn't override them with !important unless intended.
+    */
+    .verse-content {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        /* Line height is inherited from inline style set in TextDisplay.tsx */
+    }
+
     .word {
-        /* color: black !important; */
         background: transparent !important;
         border: none !important;
         cursor: default !important;
-        /* Ensure words don't break awkwardly */
         break-inside: avoid;
+        /* Font size is inherited from inline style set in Word.tsx */
     }
 
     .word.selected {
@@ -1508,38 +1455,33 @@ body {
         outline: none !important;
     }
 
-    /* Make verse numbers smaller and grey */
+    .word-morph {
+        color: #666 !important;
+        font-size: 10px !important;
+        /* Keep it consistent with UI */
+        display: block !important;
+    }
+
     .verse-number {
         color: #888 !important;
         font-size: 0.8em !important;
+        user-select: none;
     }
 
-    /* Page Breaks */
-    .verse-container {
-        break-inside: avoid;
-        page-break-inside: avoid;
+    /* Force Light Theme colors for all elements */
+    :root,
+    [data-theme="dark"] {
+        --color-bg-primary: #ffffff;
+        --color-text-primary: #000000;
+        --color-text-muted: #666666;
+        --color-verse-number: #888888;
+        --color-word-selected: transparent;
+        --color-word-hover: transparent;
     }
 
-    .chapter-header {
-        break-after: avoid;
-        page-break-after: avoid;
-        margin-top: 20px !important;
-    }
-
-    /* Columns for side-by-side printing if wide enough, otherwise block */
-    .verse-content {
-        display: block !important;
-        /* Stack them for better readability on A4 portrait, or flex */
-    }
-
-    /* Adjust font sizes for print */
-    .word-text {
-        /* color: black !important; */
-    }
-
-    .word-morph {
-        color: #666 !important;
-        font-size: 0.7em !important;
+    /* Keep highlights if they are visible on screen */
+    .word-surface {
+        /* Colors are applied inline via React if showHighlights is true */
     }
 }
 
