@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
     plugins: [react()],
-    base: './', // 相対パスにすることで、サブディレクトリへのデプロイやローカルプレビューを容易にする
+    base: './',
 })

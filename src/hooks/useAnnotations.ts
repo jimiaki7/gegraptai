@@ -1,33 +1,100 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Annotation } from '../types';
+import { supabase } from '../lib/supabase';
 
-export function useAnnotations() {
-    const [annotations, setAnnotations] = useState<Record<string, Annotation>>(() => {
-        const saved = localStorage.getItem('gegraptai_annotations');
-        return saved ? JSON.parse(saved) : {};
-    });
+export function useAnnotations(user: any) {
+    const [annotations, setAnnotations] = useState<Record<string, Annotation>>({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
 
+    // Load from Supabase on mount/user change
     useEffect(() => {
-        localStorage.setItem('gegraptai_annotations', JSON.stringify(annotations));
-    }, [annotations]);
+        if (!user) {
+            setAnnotations({});
+            setIsLoading(false);
+            return;
+        }
+
+        async function fetchAnnotations() {
+            setIsLoading(true);
+            try {
+                const { data, error } = await supabase
+                    .from('annotations')
+                    .select('*')
+                    .eq('user_id', user.id);
+
+                if (error) throw error;
+
+                if (data) {
+                    const mapped: Record<string, Annotation> = {};
+                    data.forEach((row: any) => {
+                        mapped[row.word_id] = {
+                            wordId: row.word_id,
+                            morphTag: row.morph_tag || '',
+                            exegeticalNote: row.exegetical_note || '',
+                            highlightColor: row.highlight_color || '',
+                            updatedAt: new Date(row.updated_at).getTime(),
+                        };
+                    });
+                    setAnnotations(mapped);
+                }
+            } catch (e) {
+                console.error('Failed to load annotations from Supabase:', e);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        fetchAnnotations();
+    }, [user]);
 
     const getAnnotation = useCallback((wordId: string): Annotation | undefined => {
         return annotations[wordId];
     }, [annotations]);
 
-    const updateAnnotation = useCallback((wordId: string, updates: Partial<Omit<Annotation, 'wordId'>>) => {
+    const updateAnnotation = useCallback(async (wordId: string, updates: Partial<Omit<Annotation, 'wordId'>>) => {
+        if (!user) return;
+
+        const now = Date.now();
+        const current = annotations[wordId] || {
+            wordId,
+            morphTag: '',
+            exegeticalNote: '',
+            highlightColor: '',
+        };
+
+        const newAnnotation: Annotation = {
+            ...current,
+            ...updates,
+            updatedAt: now,
+        };
+
+        // Update local state immediately
         setAnnotations(prev => ({
             ...prev,
-            [wordId]: {
-                wordId,
-                morphTag: prev[wordId]?.morphTag || '',
-                exegeticalNote: prev[wordId]?.exegeticalNote || '',
-                highlightColor: prev[wordId]?.highlightColor || '',
-                ...updates,
-                updatedAt: Date.now(),
-            },
+            [wordId]: newAnnotation,
         }));
-    }, []);
+
+        // Sync with Supabase
+        setIsSyncing(true);
+        try {
+            const { error } = await supabase
+                .from('annotations')
+                .upsert({
+                    user_id: user.id,
+                    word_id: wordId,
+                    morph_tag: newAnnotation.morphTag,
+                    exegetical_note: newAnnotation.exegeticalNote,
+                    highlight_color: newAnnotation.highlightColor,
+                    updated_at: new Date(now).toISOString(),
+                }, { onConflict: 'user_id,word_id' });
+
+            if (error) throw error;
+        } catch (e) {
+            console.error('Supabase sync error:', e);
+        } finally {
+            setIsSyncing(false);
+        }
+    }, [annotations, user]);
 
     const updateMorphTag = useCallback((wordId: string, morphTag: string) => {
         updateAnnotation(wordId, { morphTag });
@@ -48,7 +115,7 @@ export function useAnnotations() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `bible_study_annotations_${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `gegraptai_annotations_${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -78,6 +145,8 @@ export function useAnnotations() {
 
     return {
         annotations,
+        isLoading,
+        isSyncing,
         getAnnotation,
         updateMorphTag,
         updateNote,

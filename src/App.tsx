@@ -4,11 +4,13 @@ import { TextDisplay } from './components/TextDisplay';
 import { DetailPanel } from './components/DetailPanel';
 import { SettingsPanel, SettingsToggle } from './components/SettingsPanel';
 import { useAnnotations } from './hooks/useAnnotations';
+import { useAuth } from './hooks/useAuth';
 import { useSettings } from './hooks/useSettings';
 import { parseMultipleReferences } from './utils/referenceParser';
 import { getVerses } from './data/bibleData';
 import { getBookById } from './data/bookMapping';
 import { Verse, Word } from './types';
+import { AuthModal } from './components/AuthModal';
 
 
 function App() {
@@ -16,16 +18,24 @@ function App() {
     const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [settingsOpen, setSettingsOpen] = useState(false);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const { user, logout, isAuthenticated } = useAuth();
+
+    const login = useCallback(() => {
+        setIsAuthModalOpen(true);
+    }, []);
 
     const {
         annotations,
+        isLoading,
+        isSyncing,
         getAnnotation,
         updateMorphTag,
         updateNote,
         updateColor,
         exportAnnotations,
         importAnnotations,
-    } = useAnnotations();
+    } = useAnnotations(user);
 
 
     const {
@@ -157,6 +167,16 @@ function App() {
                         </svg>
                     </button>
                     <SettingsToggle onClick={() => setSettingsOpen(true)} />
+                    <button
+                        className={`auth-toggle ${isAuthenticated ? 'is-authenticated' : ''}`}
+                        onClick={isAuthenticated ? logout : login}
+                        title={isAuthenticated ? 'Logout' : 'Login'}
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '20px', height: '20px' }}>
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </button>
                 </div>
             </header>
 
@@ -173,6 +193,10 @@ function App() {
                     annotations={annotations}
                     onWordClick={handleWordClick}
                 />
+                <AuthModal
+                    isOpen={isAuthModalOpen}
+                    onClose={() => setIsAuthModalOpen(false)}
+                />
             </main>
 
             <DetailPanel
@@ -185,6 +209,10 @@ function App() {
                 onShowMorphToggle={handleShowMorphToggle}
                 onShowHighlightsToggle={handleShowHighlightsToggle}
                 onColorChange={updateColor}
+                isSyncing={isSyncing}
+                isLoading={isLoading}
+                isAuthenticated={isAuthenticated}
+                onLogin={login}
             />
 
             <SettingsPanel
@@ -200,6 +228,7 @@ function App() {
                 onExportAnnotations={exportAnnotations}
                 onImportAnnotations={importAnnotations}
             />
+
 
             <footer className="app-footer">
                 <div className="footer-content">
