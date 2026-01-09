@@ -47,22 +47,6 @@ Write your thoughts or meditations in the "Exegetical Notes" section of the Deta
 
 Gegraptai is designed with performance as the top priority.
 
-```mermaid
-graph TD
-    User[👤 User] -->|Access| App[📱 Gegraptai Web App]
-    
-    subgraph Frontend
-    App -->|Dynamic Import| Data[📚 Bible Data (Chunks)]
-    App -->|Read/Write| Local[💾 LocalStorage (No Login)]
-    end
-    
-    subgraph Cloud
-    App -->|Auth & Sync| Supabase[☁️ Supabase (Optional)]
-    end
-    
-    Note right of Data: Instantly load only<br>necessary books
-```
-
 ### Tech Stack
 - **Frontend**: React 19, TypeScript, Vite
 - **Styling**: Vanilla CSS (Premium Design System)
