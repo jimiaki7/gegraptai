@@ -31,15 +31,17 @@ export function parseReference(input: string): BibleReference | null {
     // 4: End Chapter (optional, for ranges like 1:1-2:2)
     // 5: End Verse (optional)
     //
-    // Pattern breakdown:
-    // ^(.+?)\s*                -> Book name
-    // (\d+)                    -> Start Chapter
-    // (?:[:\.]\s*(\d+))?       -> Optional Start Verse (separator : or .)
-    // (?:                      -> Optional Range Part
-    //   [\s-–]+(?:(\d+)[:\.])? -> Separator followed by optional End Chapter + colon
-    //   (\d+)                  -> End Verse OR End Chapter (if no colon)
-    // )?
-    const pattern = /^(.+?)\s*(\d+)(?:[:\.]\s*(\d+))?(?:[\s-–]+(?:(\d+)[:\.])?(\d+))?$/;
+    // Pattern explanation:
+    // 1. (.+?)             - Book name (captured)
+    // 2. \s*               - Optional space
+    // 3. (\d+)             - Start Chapter (captured)
+    // 4. (?: ... )?        - Optional Start Verse block
+    //    [:\.]\s*(\d+)     - Separator and Start Verse (captured)
+    // 5. (?: ... )?        - Optional Range block
+    //    [\s-–—]+          - Range separator (space, hyphen, endash, emdash)
+    //    (?:(\d+)\s*[:\.])?\s* - Optional End Chapter (captured) and separator
+    //    (\d+)             - End Verse OR End Chapter (captured)
+    const pattern = /^(.+?)\s*(\d+)(?:[:\.]\s*(\d+))?(?:\s*[\-–—\s]+\s*(?:(\d+)\s*[:\.]\s*)?(\d+))?$/;
     const match = trimmed.match(pattern);
 
     if (!match) {
@@ -48,7 +50,7 @@ export function parseReference(input: string): BibleReference | null {
 
     const [, bookStr, ch1, v1, ch2, v2] = match;
 
-    // Clean up book string (remove trailing periods, extra spaces)
+    // Clean up book string
     const cleanBookStr = bookStr.trim().replace(/\.$/, '');
     const book = getBookByAbbrev(cleanBookStr);
 
@@ -62,30 +64,26 @@ export function parseReference(input: string): BibleReference | null {
     let endVerse: number | null = null;
 
     if (v1) {
-        // Formats: "1:1" or "1:1-5" or "1:1-2:2"
         startVerse = parseInt(v1, 10);
         if (ch2 && v2) {
-            // "1:1-2:2" -> ch1:v1 - ch2:v2
+            // "1:1-2:2"
             endChapter = parseInt(ch2, 10);
             endVerse = parseInt(v2, 10);
         } else if (v2) {
-            // "1:1-5" -> ch1:v1 - ch1:v2 (v2 matches range end without chapter)
-            endChapter = undefined;
+            // "1:1-5"
             endVerse = parseInt(v2, 10);
         } else {
-            // "1:1" -> ch1:v1 - ch1:v1
+            // "1:1"
             endVerse = startVerse;
         }
     } else {
-        // Formats: "1" or "1-2"
         startVerse = 1;
         if (v2) {
-            // "1-2" -> ch1 - ch1:v2 (Wait, if no ch2, then v2 is end chapter)
-            // In our regex, if no ch2, v2 captures the number after hyphen
+            // "1-2"
             endChapter = parseInt(v2, 10);
             endVerse = null;
         } else {
-            // "1" -> Whole chapter
+            // "1"
             endVerse = null;
         }
     }
@@ -99,17 +97,6 @@ export function parseReference(input: string): BibleReference | null {
     };
 }
 
-/**
- * Parses a string that may contain multiple Bible references.
- * Supports:
- * - Fully qualified: "Gen 1:1, Ps 23, John 3:16"
- * - Contextual verses: "Gen 1:1, 5, 10" (interprets 5 and 10 as verses in Gen 1)
- * - Contextual chapters: "Ps 23, 24" (interprets 24 as chapter 24 in Psalms)
- * - Contextual chapter:verse: "Ps 23, 24:1" (interprets 24:1 as Ps 24:1)
- * 
- * @param input The reference string to parse
- * @returns An array of BibleReference objects
- */
 export function parseMultipleReferences(input: string): BibleReference[] {
     if (!input.trim()) return [];
 
@@ -124,40 +111,49 @@ export function parseMultipleReferences(input: string): BibleReference[] {
         const trimmed = part.trim();
         if (!trimmed) continue;
 
-        // 1. Try standard parsing (complete reference)
         const parsed = parseReference(trimmed);
         if (parsed) {
             results.push(parsed);
             lastBookId = parsed.bookId;
             lastChapter = parsed.chapter;
-            lastWasWholeChapter = (parsed.endVerse === null);
+            lastWasWholeChapter = (parsed.endVerse === null && !parsed.endChapter);
             continue;
         }
 
-        // 2. Try contextual parsing if we have previous context
         if (lastBookId) {
-            // Case A: Pattern for "Chapter:Verse" (e.g., "2:5")
-            const chVPattern = /^(\d+):(\d+)(?:[\s-–]+(\d+))?$/;
+            // Case A: Contextual "Chapter:Verse" or "Chapter:Verse-End" or "Chapter:Verse-Ch:End"
+            const chVPattern = /^(\d+)\s*[:\.]\s*(\d+)(?:\s*[\-–—\s]+\s*(?:(\d+)\s*[:\.]\s*)?(\d+))?$/;
             const chVMatch = trimmed.match(chVPattern);
 
             if (chVMatch) {
                 const chapter = parseInt(chVMatch[1], 10);
-                const startV = parseInt(chVMatch[2], 10);
-                const endV = chVMatch[3] ? parseInt(chVMatch[3], 10) : startV;
+                const startVerse = parseInt(chVMatch[2], 10);
+                let endChapter: number | undefined = undefined;
+                let endVerse: number | null = null;
+
+                if (chVMatch[3] && chVMatch[4]) {
+                    endChapter = parseInt(chVMatch[3], 10);
+                    endVerse = parseInt(chVMatch[4], 10);
+                } else if (chVMatch[4]) {
+                    endVerse = parseInt(chVMatch[4], 10);
+                } else {
+                    endVerse = startVerse;
+                }
 
                 results.push({
                     bookId: lastBookId,
                     chapter,
-                    startVerse: startV,
-                    endVerse: endV
+                    startVerse,
+                    endChapter,
+                    endVerse
                 });
-                lastChapter = chapter;
+                lastChapter = endChapter || chapter;
                 lastWasWholeChapter = false;
                 continue;
             }
 
-            // Case B: Pattern for "Number" or "Number-Number" (e.g., "10" or "10-12")
-            const numPattern = /^(\d+)(?:[\s-–]+(\d+))?$/;
+            // Case B: Contextual "Verse" or "Verse-Verse" or "Chapter" or "Chapter-Chapter"
+            const numPattern = /^(\d+)(?:\s*[\-–—\s]+\s*(\d+))?$/;
             const numMatch = trimmed.match(numPattern);
 
             if (numMatch) {
@@ -165,16 +161,17 @@ export function parseMultipleReferences(input: string): BibleReference[] {
                 const secondNum = numMatch[2] ? parseInt(numMatch[2], 10) : null;
 
                 if (lastWasWholeChapter) {
-                    // Context was a whole chapter (e.g., "Gen 1"), so "2" means chapter 2
+                    // "Ps 23, 24-25" -> Psalm 23, then Chapter 24 to 25
                     results.push({
                         bookId: lastBookId,
                         chapter: firstNum,
                         startVerse: 1,
+                        endChapter: secondNum !== null ? secondNum : undefined,
                         endVerse: null
                     });
-                    lastChapter = firstNum;
+                    lastChapter = secondNum || firstNum;
                 } else if (lastChapter !== null) {
-                    // Context was specific verses (e.g., "Gen 1:1"), so "5" means verse 5 in chapter 1
+                    // "Gen 1:1, 5-10" -> Gen 1:1, then Gen 1:5 to 10
                     results.push({
                         bookId: lastBookId,
                         chapter: lastChapter,

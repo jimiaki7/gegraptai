@@ -102,10 +102,11 @@ export async function getVerses(
 
         for (const verseNum of verseNumbers) {
             // Apply verse range filter
-            if (endVerse !== null) {
-                if (verseNum < startVerse || verseNum > endVerse) {
-                    continue;
-                }
+            if (verseNum < startVerse) {
+                continue;
+            }
+            if (endVerse !== null && verseNum > endVerse) {
+                continue;
             }
 
             const wordsData: WordData[] = chapterData[verseNum.toString()];
