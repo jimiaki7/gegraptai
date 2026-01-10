@@ -1426,60 +1426,113 @@ body {
 
 @media print {
 
-    /* Hide UI elements */
+    /* Hide non-essential UI elements */
     .app-header,
     .detail-panel,
-    .settings-overlay {
+    .settings-overlay,
+    .auth-prompt-overlay,
+    .welcome-modal-overlay,
+    .coffee-link {
         display: none !important;
     }
 
-    /* Reset app layout for print */
+    /* Aggressive reset for natural document flow */
+    body,
+    html,
+    #root {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        background: white !important;
+    }
+
     .app {
-        min-height: auto;
+        display: block !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        position: static !important;
     }
 
     .app-main {
-        max-width: none;
-        padding: 0;
-        margin: 0;
+        display: block !important;
+        max-width: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        position: static !important;
+        overflow: visible !important;
+        height: auto !important;
+        min-height: 0 !important;
     }
 
-    /* Adjust text display for print */
+    /* Ensure text display flows correctly */
     .text-display {
-        padding: 20px 0;
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        height: auto !important;
+        min-height: 0 !important;
+        flex: none !important;
+        position: static !important;
     }
 
     .verse {
-        margin-bottom: 20px;
-        page-break-inside: avoid;
+        margin-bottom: 24px !important;
+        page-break-inside: avoid !important;
+        display: block !important;
+        position: static !important;
     }
 
     .verse-content {
-        line-height: var(--line-height, 3.0);
+        line-height: var(--line-height, 3.0) !important;
+        display: block !important;
     }
 
     .word {
         background: none !important;
         color: #000 !important;
-        margin: 2px 4px;
+        margin: 2px 4px !important;
+        display: inline-block !important;
+        position: static !important;
     }
 
     .word-morph {
         color: #666 !important;
-        font-size: 9px;
+        font-size: 9px !important;
     }
 
     .verse-number {
         color: #999 !important;
     }
 
+    /* Footer styling: Ensure it follows app-main naturally */
+    .app-footer {
+        display: block !important;
+        position: static !important;
+        margin-top: 50px !important;
+        padding: 40px 0 !important;
+        background: none !important;
+        border-top: 1px solid #ccc !important;
+        text-align: center !important;
+        page-break-before: auto !important;
+    }
+
+    .footer-content {
+        max-width: none !important;
+        margin: 0 auto !important;
+        color: #666 !important;
+    }
+
     /* Force light theme colors for print */
     :root,
     [data-theme="dark"] {
-        --color-bg-primary: #fff;
-        --color-text-primary: #000;
-        --color-text-muted: #666;
-        --color-verse-number: #999;
+        --color-bg-primary: #fff !important;
+        --color-bg-panel: #fff !important;
+        --color-text-primary: #000 !important;
+        --color-text-muted: #666 !important;
+        --color-verse-number: #999 !important;
+        --color-border: #ccc !important;
     }
 }
 

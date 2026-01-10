@@ -13,77 +13,60 @@ export function parseReference(input: string): BibleReference | null {
     const trimmed = input.trim();
     if (!trimmed) return null;
 
-    // Improved Regex to handle:
-    // 1. Multiple words book names (1 Samuel, Song of Songs)
-    // 2. Book names starting with digits (1Cor, 2 Kings)
-    // 3. Optional period after book name
-    // 4. Chapter only (Gen 1)
-    // 5. Verse ranges (Gen 1:1-5)
+    // Cleaner strategy:
+    // 1. Extract book name and the rest of the string
+    // 2. Parse the rest of the string for ch/v ranges
 
-    // Strategy: Split into "Book Part" and "Reference Part"
-    // The reference part starts with the last number sequence that might be a chapter/verse
-
-    // Updated regex to handle cross-chapter ranges like "1:1-2:2" or "1-2"
-    // Groups:
-    // 1: Book name
-    // 2: Start Chapter
-    // 3: Start Verse (optional)
-    // 4: End Chapter (optional, for ranges like 1:1-2:2)
-    // 5: End Verse (optional)
-    //
-    // Pattern explanation:
-    // 1. (.+?)             - Book name (captured)
-    // 2. \s*               - Optional space
-    // 3. (\d+)             - Start Chapter (captured)
-    // 4. (?: ... )?        - Optional Start Verse block
-    //    [:\.]\s*(\d+)     - Separator and Start Verse (captured)
-    // 5. (?: ... )?        - Optional Range block
-    //    [\s-–—]+          - Range separator (space, hyphen, endash, emdash)
-    //    (?:(\d+)\s*[:\.])?\s* - Optional End Chapter (captured) and separator
-    //    (\d+)             - End Verse OR End Chapter (captured)
-    const pattern = /^(.+?)\s*(\d+)(?:[:\.]\s*(\d+))?(?:\s*[\-–—\s]+\s*(?:(\d+)\s*[:\.]\s*)?(\d+))?$/;
+    // Regex for ch:v-ch:v or ch:v-v or ch-ch
+    // Groups: 1:Book, 2:Ch1, 3:V1, 4:Ch2_or_V2, 5:V2
+    // Supports:
+    // "Gen 1"
+    // "Gen 1:1"
+    // "Gen 1:1-5"
+    // "Gen 1-2"
+    // "Gen 1:1-2:2"
+    const pattern = /^(.+?)\s*(\d+)(?:\s*[:\.]\s*(\d+))?(?:\s*[\-–—\s]+\s*(\d+)(?:\s*[:\.]\s*(\d+))?)?$/;
     const match = trimmed.match(pattern);
 
     if (!match) {
         return null;
     }
 
-    const [, bookStr, ch1, v1, ch2, v2] = match;
+    const [, bookStr, sCh, sV, m1, m2] = match;
 
-    // Clean up book string
-    const cleanBookStr = bookStr.trim().replace(/\.$/, '');
-    const book = getBookByAbbrev(cleanBookStr);
-
+    const book = getBookByAbbrev(bookStr);
     if (!book) {
         return null;
     }
 
-    const chapter = parseInt(ch1, 10);
+    const chapter = parseInt(sCh, 10);
     let startVerse = 1;
     let endChapter: number | undefined = undefined;
     let endVerse: number | null = null;
 
-    if (v1) {
-        startVerse = parseInt(v1, 10);
-        if (ch2 && v2) {
-            // "1:1-2:2"
-            endChapter = parseInt(ch2, 10);
-            endVerse = parseInt(v2, 10);
-        } else if (v2) {
-            // "1:1-5"
-            endVerse = parseInt(v2, 10);
+    if (sV) {
+        // We have a start verse (e.g. 1:1)
+        startVerse = parseInt(sV, 10);
+        if (m1 && m2) {
+            // we have ch:v-ch:v (e.g. 1:1-2:2)
+            endChapter = parseInt(m1, 10);
+            endVerse = parseInt(m2, 10);
+        } else if (m1) {
+            // we have ch:v-v (e.g. 1:1-5)
+            endVerse = parseInt(m1, 10);
         } else {
-            // "1:1"
+            // just 1:1
             endVerse = startVerse;
         }
     } else {
+        // No start verse (e.g. 1 or 1-2)
         startVerse = 1;
-        if (v2) {
-            // "1-2"
-            endChapter = parseInt(v2, 10);
+        if (m1) {
+            // we have ch-ch (e.g. 1-2)
+            endChapter = parseInt(m1, 10);
             endVerse = null;
         } else {
-            // "1"
+            // just 1
             endVerse = null;
         }
     }
