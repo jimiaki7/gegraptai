@@ -158,7 +158,7 @@ export function DetailPanel({
                         <textarea
                             id="exegetical-note"
                             className="detail-field-input detail-field-textarea"
-                            placeholder="Syntax, usage, theological value, etc. (語義、用例、神学的含意など...)"
+                            placeholder="Exegetical, theological notes, etc. (釈義、神学的ノートなど...) "
                             value={annotation?.exegeticalNote || ''}
                             onChange={handleNoteChange}
                         />
