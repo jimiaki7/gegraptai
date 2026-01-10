@@ -12,6 +12,7 @@ export interface BibleReference {
     bookId: string;
     chapter: number;
     startVerse: number;
+    endChapter?: number;
     endVerse: number | null;
 }
 

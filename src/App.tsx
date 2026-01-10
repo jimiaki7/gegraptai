@@ -100,24 +100,38 @@ function App() {
 
         for (const ref of refs) {
             const book = getBookById(ref.bookId);
-            if (!book) {
-                // Should not happen if parser is correct, but for safety
-                continue;
-            }
+            if (!book) continue;
+
+            const startChapter = ref.chapter;
+            const endChapter = ref.endChapter || startChapter;
 
             try {
-                const loadedVerses = await getVerses(
-                    ref.bookId,
-                    ref.chapter,
-                    ref.startVerse,
-                    ref.endVerse,
-                    book.lang
-                );
+                for (let ch = startChapter; ch <= endChapter; ch++) {
+                    // Determine start and end verse for this specific chapter
+                    let currentStartVerse = 1;
+                    let currentEndVerse: number | null = null;
 
-                if (loadedVerses.length === 0) {
-                    hasError = true;
-                } else {
-                    allVerses.push(...loadedVerses);
+                    if (ch === startChapter) {
+                        currentStartVerse = ref.startVerse;
+                    }
+
+                    if (ch === endChapter) {
+                        currentEndVerse = ref.endVerse;
+                    }
+
+                    const loadedVerses = await getVerses(
+                        ref.bookId,
+                        ch,
+                        currentStartVerse,
+                        currentEndVerse,
+                        book.lang
+                    );
+
+                    if (loadedVerses.length === 0) {
+                        hasError = true;
+                    } else {
+                        allVerses.push(...loadedVerses);
+                    }
                 }
             } catch (e) {
                 hasError = true;

@@ -23,23 +23,30 @@ export function parseReference(input: string): BibleReference | null {
     // Strategy: Split into "Book Part" and "Reference Part"
     // The reference part starts with the last number sequence that might be a chapter/verse
 
-    // Try to match situations where the input ends with digits (verse or chapter)
-    // Regex explanation:
-    // ^(.+?)               - Capture group 1: Book name (lazy match)
-    // \s*                  - Optional space
-    // (\d+)                - Capture group 2: Chapter
-    // (?:[:\.](\d+))?      - Non-capture, optional: Separator (: or .) and Capture group 3: Start Verse
-    // (?:[\s-–]+(\d+))?    - Non-capture, optional: Separator (space, -, –) and Capture group 4: End Verse
-    // $                    - End of string
-
-    const pattern = /^(.+?)\s*(\d+)(?:[:\.]\s*(\d+)(?:[\s-–]+(\d+))?)?$/;
+    // Updated regex to handle cross-chapter ranges like "1:1-2:2" or "1-2"
+    // Groups:
+    // 1: Book name
+    // 2: Start Chapter
+    // 3: Start Verse (optional)
+    // 4: End Chapter (optional, for ranges like 1:1-2:2)
+    // 5: End Verse (optional)
+    //
+    // Pattern breakdown:
+    // ^(.+?)\s*                -> Book name
+    // (\d+)                    -> Start Chapter
+    // (?:[:\.]\s*(\d+))?       -> Optional Start Verse (separator : or .)
+    // (?:                      -> Optional Range Part
+    //   [\s-–]+(?:(\d+)[:\.])? -> Separator followed by optional End Chapter + colon
+    //   (\d+)                  -> End Verse OR End Chapter (if no colon)
+    // )?
+    const pattern = /^(.+?)\s*(\d+)(?:[:\.]\s*(\d+))?(?:[\s-–]+(?:(\d+)[:\.])?(\d+))?$/;
     const match = trimmed.match(pattern);
 
     if (!match) {
         return null;
     }
 
-    const [, bookStr, chapterStr, startVerseStr, endVerseStr] = match;
+    const [, bookStr, ch1, v1, ch2, v2] = match;
 
     // Clean up book string (remove trailing periods, extra spaces)
     const cleanBookStr = bookStr.trim().replace(/\.$/, '');
@@ -49,32 +56,45 @@ export function parseReference(input: string): BibleReference | null {
         return null;
     }
 
-    const chapter = parseInt(chapterStr, 10);
-
-    // If no start verse is specified, it means "Whole Chapter"
-    // In our system, we represent whole chapter as startVerse=1, endVerse=null
-
+    const chapter = parseInt(ch1, 10);
     let startVerse = 1;
+    let endChapter: number | undefined = undefined;
     let endVerse: number | null = null;
 
-    if (startVerseStr) {
-        startVerse = parseInt(startVerseStr, 10);
-        if (endVerseStr) {
-            endVerse = parseInt(endVerseStr, 10);
+    if (v1) {
+        // Formats: "1:1" or "1:1-5" or "1:1-2:2"
+        startVerse = parseInt(v1, 10);
+        if (ch2 && v2) {
+            // "1:1-2:2" -> ch1:v1 - ch2:v2
+            endChapter = parseInt(ch2, 10);
+            endVerse = parseInt(v2, 10);
+        } else if (v2) {
+            // "1:1-5" -> ch1:v1 - ch1:v2 (v2 matches range end without chapter)
+            endChapter = undefined;
+            endVerse = parseInt(v2, 10);
         } else {
-            // Single verse specified (e.g. Gen 1:1) -> start=1, end=1
+            // "1:1" -> ch1:v1 - ch1:v1
             endVerse = startVerse;
         }
     } else {
-        // No verse specified -> Whole chapter (e.g. Gen 1) -> start=1, end=null
+        // Formats: "1" or "1-2"
         startVerse = 1;
-        endVerse = null;
+        if (v2) {
+            // "1-2" -> ch1 - ch1:v2 (Wait, if no ch2, then v2 is end chapter)
+            // In our regex, if no ch2, v2 captures the number after hyphen
+            endChapter = parseInt(v2, 10);
+            endVerse = null;
+        } else {
+            // "1" -> Whole chapter
+            endVerse = null;
+        }
     }
 
     return {
         bookId: book.id,
         chapter,
         startVerse,
+        endChapter,
         endVerse,
     };
 }
