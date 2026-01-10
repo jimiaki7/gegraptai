@@ -42,6 +42,21 @@ export function useAuth() {
         };
     }, []);
 
+    const loginWithGoogle = useCallback(async () => {
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin,
+                },
+            });
+            if (error) throw error;
+        } catch (err) {
+            console.error('[useAuth] loginWithGoogle error', err);
+            throw err;
+        }
+    }, []);
+
     const login = useCallback(async () => {
         // Supabase login logic will be implemented in a dedicated Modal/UI component
         // This hook just provides the user state and login trigger
@@ -65,6 +80,7 @@ export function useAuth() {
         user,
         isInit,
         login,
+        loginWithGoogle,
         logout,
         isAuthenticated: !!user,
     };
